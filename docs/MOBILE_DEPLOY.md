@@ -1,4 +1,6 @@
-# 紫微 · 观星：本地测试与 Vercel 部署
+# 紫微 · 观星：本地测试与服务端部署
+
+当前手机预览采用[本机 AI 服务和临时 HTTPS 通道](LOCAL_AI_PREVIEW.md)，不依赖 Vercel。下方保留 Next.js 常规部署配置供后续自托管参考。
 
 这是面向 iPhone Safari 的紫微斗数手机网页版。排盘与最多 20 条历史记录在本机处理；AI 解读由服务端调用智谱免费模型，也可明确选择 OpenAI。历史不跨设备同步；清除浏览器网站数据会同时清除历史。简体中文界面采用墨色与金色，图标为本项目原创几何星盘。
 
@@ -25,6 +27,7 @@ npm start
 | --- | --- |
 | `AI_PROVIDER` | 国内方案填写 `zhipu`；使用原 OpenAI 方案时明确填写 `openai` |
 | `ZHIPU_API_KEY` | 智谱「模型标准 API」Key；国内方案必填，不能用 Coding Plan 套餐 Key 替代 |
+| `ZHIPU_MODEL` | 仅允许 `glm-4.7-flash` / `glm-4-flash-250414`；示例选择已通过本机真实解读的后者 |
 | `OPENAI_API_KEY` | 仅选择 `openai` 时填写 OpenAI 项目 Key |
 | `OPENAI_MODEL` | 仅 OpenAI 方案使用，可选，默认 `gpt-5.4-mini` |
 | `AI_ACCESS_TOKEN` | 建议自行生成至少 24 字符的随机访问口令，限制个人测试版的 AI 调用 |
@@ -33,16 +36,16 @@ npm start
 
 上述服务端变量都不能使用 `NEXT_PUBLIC_` 前缀。只有 `NEXT_PUBLIC_SITE_URL` 是公开的站点地址，用于元数据。修改环境变量后重启本地服务；Vercel 上修改后重新部署。OpenAI 建议将 API Key 存在服务端环境变量或密钥管理服务中，浏览器不应接触它。[OpenAI API 认证说明](https://developers.openai.com/api/reference/overview)
 
-AI 请求前需要用户同意：出生信息和所选流年发送给本站服务端；服务端重新排盘，仅将结构化星曜、农历出生年、性别和所选流年/大限发送给所选服务商（不发送公历生日、姓名或地点）；页面会给出文化参考提示。不要在浏览器输入模型 API Key。智谱方案固定使用 `glm-4.7-flash`，截至 2026-10-24 官方输入、输出免费，仍受限流及当期政策约束，不承诺永久免费；原 OpenAI 方案按其账号规则计费；构建和自动测试不需要真实密钥，也不证明实际账户、模型权限、余额或网络可用。
+AI 请求前需要用户同意：出生信息和所选流年发送给本站服务端；服务端重新排盘，仅将结构化星曜、农历出生年、性别和所选流年/大限发送给所选服务商（不发送公历生日、姓名或地点）；页面会给出文化参考提示。不要在浏览器输入模型 API Key。智谱方案仅允许上述两个免费型号，截至 2026-10-24 官方输入、输出免费，仍受限流及当期政策约束，不承诺永久免费；原 OpenAI 方案按其账号规则计费；构建和自动测试不需要真实密钥，也不证明实际账户、模型权限、余额或网络可用。
 
 ### 智谱免费方案
 
 1. 登录 [智谱开放平台](https://bigmodel.cn/apikey/platform)，创建「模型标准 API」Key；无需购买 Coding Plan。免费调用仍需本人账号和 Key。
-2. 服务端配置 `AI_PROVIDER=zhipu`、`ZHIPU_API_KEY` 和 `AI_ACCESS_TOKEN`，重启或重新部署。不要在小程序中填模型密钥。
-3. 国内接口固定为官方 HTTPS 地址 `https://open.bigmodel.cn/api/paas/v4/chat/completions`，使用 JSON 输出并执行服务端校验；关闭深度思考，45 秒超时，不自动重试。免费方案不接受客户端模型名称，不自动切换付费型号或 OpenAI。
+2. 服务端配置 `AI_PROVIDER=zhipu`、`ZHIPU_API_KEY`、`ZHIPU_MODEL=glm-4-flash-250414` 和 `AI_ACCESS_TOKEN`，重启或重新部署。不要在小程序中填模型密钥。
+3. 国内接口固定为官方 HTTPS 地址 `https://open.bigmodel.cn/api/paas/v4/chat/completions`，使用 JSON 输出并执行服务端校验；仅 GLM-4.7 发送关闭深度思考参数（旧型号不支持该字段），45 秒超时，不自动重试。免费方案不接受客户端模型名称，不自动切换付费型号或 OpenAI。
 4. 微信版在 `miniprogram/config.js` 填公开的 `apiBaseUrl`，保持 `aiProvider: 'zhipu'` 与服务端一致。服务商不一致时返回 409，要求更新配置并重新同意。后端部署、微信请求域名与模型账号权限仍需实际验证。
 
-定价与接口依据：[官方定价](https://docs.bigmodel.cn/cn/guide/start/pricing)、[GLM-4.7-Flash](https://docs.bigmodel.cn/cn/guide/models/free/glm-4.7-flash)、[标准 Key 与套餐区别](https://docs.bigmodel.cn/cn/guide/start/quick-start)。本机代码和模拟测试不能证明实际账号已获免费调用权限。
+定价与接口依据：[官方定价](https://docs.bigmodel.cn/cn/guide/start/pricing)、[GLM-4.7-Flash](https://docs.bigmodel.cn/cn/guide/models/free/glm-4.7-flash)、[标准 Key 与套餐区别](https://docs.bigmodel.cn/cn/guide/start/quick-start)。2026-10-24 已用用户授权配置的智谱标准 Key 和合成示例命盘，通过 `glm-4-flash-250414` 真实返回五项解读，约 24.5 秒；`glm-4.7-flash` 当时返回访问量过大，未将拥堵当作密钥无效。其他部署仍需验证自己的账号。
 
 ## Vercel 部署
 
@@ -93,4 +96,4 @@ iPhone 没有通用的自动安装弹窗，需从 Safari 分享菜单手动添�
 
 生产构建已在 Node 22 本机通过；上游排盘回归通过，包含 768 个采样命盘。手机尺寸浏览器已检查 12 宫、四化切换、历史保存与删除、AI 未配置提示和横向溢出。完整 npm 官方依赖审查为 0 项漏洞。详情与测试数量以最终交付记录为准。
 
-尚未使用真实模型 Key 发起外部请求；尚未完成实体 iPhone Safari 主屏幕安装和 Vercel 公网部署。AI 费用、模型权限、网络与真实解读效果需部署者实际试用验证。
+本机真实智谱五项解读已通过，密钥只保存在被 Git 忽略的本机服务端环境文件中；尚未完成实体 iPhone Safari 主屏幕安装、手机 AI 调用和 Vercel 公网部署。AI 费用、模型权限、网络与真实解读效果需部署者实际试用验证。

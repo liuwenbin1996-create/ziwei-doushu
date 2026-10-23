@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "preview:ai": "node --env-file=.env.local --import tsx scripts/preview-ai-server.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx scripts/regression/pan-integrity.test.ts && node --import tsx scripts/regression/dst-cn.test.ts && node --import tsx scripts/regression/sizhu-lichun-boundary.test.ts && node --import tsx scripts/regression/hongluan-tianxi.test.ts && node --import tsx scripts/regression/famous-hour-consistency.test.ts && node --import tsx scripts/regression/iztro-time-index-boundary.test.ts && node --import tsx scripts/regression/solar-date-exists.test.ts && node --import tsx scripts/regression/natal-dual-sihua-same-palace.test.ts && node --import tsx scripts/regression/neutral-naming.test.ts",
     "test:mobile": "node --import tsx --test tests/mobile*.test.ts tests/history.test.ts",

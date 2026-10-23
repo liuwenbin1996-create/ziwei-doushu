@@ -1,3 +1,4 @@
+import { interpretationEvidence } from "../lib/mobile/grounding";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { handleChart, handleInterpret } from "../lib/mobile/http";
@@ -28,7 +29,7 @@ const interpretation = {
   sections: INTERPRETATION_TOPICS.map((topic) => ({
     topic,
     summary: `${topic}传统文化观察。`,
-    observations: ["按盘面符号作参考。"],
+    observations: interpretationEvidence(createMobileChart(input))[topic],
     suggestions: ["结合实际经历自行核对。"],
   })),
   notice: "传统文化参考",
@@ -230,6 +231,14 @@ test("upstream failures map to friendly status codes without leaking details", a
       504,
     ],
     [{ status: 504, message: "SECRET_UPSTREAM_DETAIL" }, 504],
+    [
+      {
+        name: "Error",
+        cause: { name: "AbortError" },
+        message: "SECRET_UPSTREAM_DETAIL",
+      },
+      504,
+    ],
     [{ status: 401, message: "SECRET_UPSTREAM_DETAIL" }, 502],
     [new Error("SECRET_UPSTREAM_DETAIL"), 502],
   ] as const) {

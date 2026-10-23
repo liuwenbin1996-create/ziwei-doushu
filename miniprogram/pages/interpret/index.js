@@ -9,14 +9,14 @@ function baseUrl() {
 const fingerprint = request => request ? JSON.stringify(request) : '';
 function responseBody(value) { if (typeof value !== 'string') return value; try { return JSON.parse(value); } catch (_) { return null; } }
 Page({
-  data: { hasChart: false, configured: false, providerName: '', chartSummary: '', token: '', consent: false, busy: false, error: '', analysis: null, topics: ['性格','事业','财运','婚姻','流年'] },
+  data: { hasChart: false, configured: false, providerName: '', viaTunnel: false, chartSummary: '', token: '', consent: false, busy: false, error: '', analysis: null, topics: ['性格','事业','财运','婚姻','流年'] },
   onShow() {
     this._active = true;
     const app = getApp(), request = app.globalData.currentRequest;
     const next = fingerprint(request), changed = next !== this._fingerprint;
     this._fingerprint = next;
     const ready = Boolean(request && app.globalData.currentResult);
-    this.setData({ hasChart: ready, configured: Boolean(baseUrl() && PROVIDERS[config.aiProvider]), providerName: PROVIDERS[config.aiProvider] || '', chartSummary: ready ? request.birth.date + ' · ' + BRANCHES[request.birth.hour] + '时' + (request.birth.lateZi ? '（晚子）' : '') + ' · ' + (request.birth.gender === 'male' ? '男' : '女') + ' · ' + request.year + ' 流年' : '', ...(changed || !ready ? { analysis: null, token: '', consent: false, error: '' } : {}) });
+    this.setData({ hasChart: ready, configured: Boolean(baseUrl() && PROVIDERS[config.aiProvider]), providerName: PROVIDERS[config.aiProvider] || '', viaTunnel: /^https:\/\/[^/]+\.trycloudflare\.com(?:\/|$)/i.test(baseUrl()), chartSummary: ready ? request.birth.date + ' · ' + BRANCHES[request.birth.hour] + '时' + (request.birth.lateZi ? '（晚子）' : '') + ' · ' + (request.birth.gender === 'male' ? '男' : '女') + ' · ' + request.year + ' 流年' : '', ...(changed || !ready ? { analysis: null, token: '', consent: false, error: '' } : {}) });
   },
   onHide() { this._active = false; this.cancelRequest(); this.setData({ token: '', consent: false, busy: false }); },
   onUnload() { this._active = false; this.cancelRequest(); },

@@ -3,6 +3,7 @@ import { createMobileChart, parseMobileRequest } from "./chart";
 import { parseInterpretation } from "./interpretation";
 import { generateInterpretation, type GenerateInterpretation } from "./openai";
 import { resolveAIConfiguration } from "./ai-config";
+import { assertInterpretationGrounding } from "./grounding";
 
 const MAX_BODY_BYTES = 16 * 1024;
 class RequestError extends Error {
@@ -160,12 +161,17 @@ export async function handleInterpret(
       const interpretation = parseInterpretation(
         JSON.parse(result.output_text),
       );
+      assertInterpretationGrounding(interpretation, chart);
       return json({ ...interpretation, generatedAt: new Date().toISOString() });
     } catch (error) {
       // 仅按类型/状态分类；原始错误常含请求、密钥或上游响应，不输出也不写日志。
       const metadata =
         error && typeof error === "object"
-          ? (error as { status?: number; name?: string })
+          ? (error as {
+              status?: number;
+              name?: string;
+              cause?: { name?: string };
+            })
           : {};
       if (metadata.status === 429)
         throw new RequestError("AI 服务繁忙或额度不足，请稍后重试。", 429);
@@ -174,7 +180,8 @@ export async function handleInterpret(
         metadata.status === 504 ||
         metadata.name === "APIConnectionTimeoutError" ||
         metadata.name === "TimeoutError" ||
-        metadata.name === "AbortError"
+        metadata.name === "AbortError" ||
+        metadata.cause?.name === "AbortError"
       ) {
         throw new RequestError("AI 解读等待超时，请稍后重试。", 504);
       }

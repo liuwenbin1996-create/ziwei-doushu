@@ -6,6 +6,7 @@
     <text class="card-title">本次解读的命盘</text><text class="chart-summary">{{chartSummary}}</text>
     <view wx:if="{{!configured}}" class="notice">AI 解读暂未启用，需要部署并配置 AI 服务。当前可在本机排盘、查看星曜和保存历史。</view>
     <block wx:if="{{configured}}">
+      <view wx:if="{{viaTunnel}}" class="notice">临时预览经 Cloudflare HTTPS 通道转发出生信息与解读结果，电脑和通道需保持运行。</view>
       <view class="token-heading"><text class="label">AI 访问口令</text><text class="muted token-note">由部署者提供</text></view>
       <input class="token-input" password="{{true}}" value="{{token}}" maxlength="512" placeholder="不是模型 API Key" placeholder-class="token-placeholder" bindinput="onTokenInput" disabled="{{busy}}" />
       <text class="muted token-hint">口令只在当前页面内存中使用，离开页面即清空。</text>

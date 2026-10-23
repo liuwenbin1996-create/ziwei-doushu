@@ -1,3 +1,4 @@
+import { interpretationEvidence } from "../lib/mobile/grounding";
 import test, { before, after, mock } from "node:test";
 import assert from "node:assert/strict";
 import { createMobileChart } from "../lib/mobile/chart";
@@ -29,7 +30,7 @@ const interpretation = {
   sections: INTERPRETATION_TOPICS.map((topic) => ({
     topic,
     summary: topic + "传统文化观察。",
-    observations: ["结合宫位与星曜自行核对。"],
+    observations: interpretationEvidence(createMobileChart(input))[topic],
     suggestions: ["结合实际经历观察日常习惯。"],
   })),
   notice: "传统文化参考",
@@ -104,16 +105,21 @@ after(() => {
 
 // 真正执行安装的 SDK，仅替换 HTTP 传输；不发送真实网络请求或使用真实密钥。
 test("Zhipu SDK contract fixes the free model, endpoint, authentication and JSON format", async () => {
-  const config = resolveAIConfiguration({
-    ...env,
-    ZHIPU_MODEL: "paid-model-sentinel",
-  });
+  const config = resolveAIConfiguration(env);
   assert.ok(config);
   assert.equal(config.model, "glm-4.7-flash");
   const transport = sdkTransport(chatReply());
+  await assert.rejects(
+    generateInterpretation(
+      createMobileChart(input),
+      { ...config, model: "paid-model-sentinel" },
+      transport.fetch,
+    ),
+  );
+  assert.equal(transport.calls.length, 0);
   const result = await generateInterpretation(
     createMobileChart(input),
-    { ...config, model: "paid-model-sentinel" },
+    config,
     transport.fetch,
   );
   assert.equal(result.status, "completed");
@@ -155,6 +161,10 @@ test("Zhipu SDK contract fixes the free model, endpoint, authentication and JSON
 });
 
 test("provider configuration does not fall back from Zhipu to a paid provider", () => {
+  assert.equal(
+    resolveAIConfiguration({ ...env, ZHIPU_MODEL: "paid-model-sentinel" }),
+    null,
+  );
   assert.equal(resolveAIConfiguration({}), null);
   assert.equal(
     resolveAIConfiguration({
@@ -188,6 +198,26 @@ test("provider configuration does not fall back from Zhipu to a paid provider", 
     resolveAIConfiguration({ OPENAI_API_KEY: env.OPENAI_API_KEY })?.provider,
     "openai",
   );
+});
+
+test("the second verified free model omits unsupported thinking parameters", async () => {
+  const config = resolveAIConfiguration({
+    ...env,
+    ZHIPU_MODEL: "glm-4-flash-250414",
+  });
+  assert.ok(config);
+  const transport = sdkTransport(chatReply());
+  const result = await generateInterpretation(
+    createMobileChart(input),
+    config,
+    transport.fetch,
+  );
+  assert.equal(result.status, "completed");
+  assert.equal(transport.calls[0].body.model, "glm-4-flash-250414");
+  assert.equal(transport.calls[0].body.thinking, undefined);
+  assert.deepEqual(transport.calls[0].body.response_format, {
+    type: "json_object",
+  });
 });
 
 test("Zhipu does not forward OpenAI organization or project identifiers", async () => {

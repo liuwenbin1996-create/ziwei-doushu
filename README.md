@@ -18,6 +18,6 @@ npm run build
 npm start -- --hostname 0.0.0.0
 ```
 
-不配置密钥也可排盘和保存历史。国内免费方案在服务端配置 AI_PROVIDER=zhipu、ZHIPU_API_KEY、AI_ACCESS_TOKEN；固定使用当前免费定价的 glm-4.7-flash。OpenAI 保留为可选方案，配置见 `.env.example` 与 [部署说明](docs/MOBILE_DEPLOY.md)。不要提交真实密钥。
+不配置密钥也可排盘和保存历史。国内免费方案在服务端配置 AI_PROVIDER=zhipu、ZHIPU_API_KEY、AI_ACCESS_TOKEN；ZHIPU_MODEL 仅允许当前官方免费型号 glm-4.7-flash 或 glm-4-flash-250414；示例配置选择已通过真实五项解读的后者。OpenAI 保留为可选方案，配置见 `.env.example` 与 [部署说明](docs/MOBILE_DEPLOY.md)。不要提交真实密钥。
 
 [许可审查](docs/LICENSE_REVIEW.md) · [上游原 README](docs/UPSTREAM_README.md)。上游商业服务介绍不代表本版功能。传统文化参考，非科学预测。

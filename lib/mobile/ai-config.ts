@@ -4,6 +4,10 @@ export const AI_PROVIDER_NAMES: Record<AIProvider, string> = {
   openai: "OpenAI",
 };
 export const ZHIPU_FREE_MODEL = "glm-4.7-flash";
+export const ZHIPU_FREE_MODELS = [
+  ZHIPU_FREE_MODEL,
+  "glm-4-flash-250414",
+] as const;
 export const ZHIPU_BASE_URL = "https://open.bigmodel.cn/api/paas/v4/";
 
 export interface AIConfiguration {
@@ -34,13 +38,21 @@ export function resolveAIConfiguration(
     provider === "zhipu" ? env.ZHIPU_API_KEY : env.OPENAI_API_KEY
   )?.trim();
   if (!apiKey) return null;
+  const zhipuModel = env.ZHIPU_MODEL?.trim() || ZHIPU_FREE_MODEL;
+  if (
+    provider === "zhipu" &&
+    !ZHIPU_FREE_MODELS.includes(
+      zhipuModel as (typeof ZHIPU_FREE_MODELS)[number],
+    )
+  )
+    return null;
   return {
     provider,
     apiKey,
-    // 免费方案固定此型号，不读取客户端型号，也不自动改用付费 FlashX/旗舰模型。
+    // 仅允许已核查的免费型号，不接受客户端型号，不自动改用付费模型。
     model:
       provider === "zhipu"
-        ? ZHIPU_FREE_MODEL
+        ? zhipuModel
         : env.OPENAI_MODEL?.trim() || "gpt-5.4-mini",
   };
 }

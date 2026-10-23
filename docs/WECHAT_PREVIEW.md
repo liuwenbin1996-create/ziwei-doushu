@@ -31,7 +31,9 @@
 
 ## AI 后端配置
 
-当前 Vercel 尚未部署，真实 AI 请求未验证。要启用 AI，先按[部署说明](MOBILE_DEPLOY.md)部署本仓库后端，国内方案在服务端设置 `AI_PROVIDER=zhipu`、`ZHIPU_API_KEY`、`AI_ACCESS_TOKEN`，固定使用当前免费定价的 `glm-4.7-flash`。然后在 `miniprogram/config.js` 的 `apiBaseUrl` 填公开 HTTPS 网站地址，保持 `aiProvider: 'zhipu'` 与服务端一致。免费模型仍需注册并创建智谱标准 API Key，不自动切换到付费模型。
+当前选择[电脑运行后端和临时 HTTPS 通道](LOCAL_AI_PREVIEW.md)。服务只监听本机并保留访问口令，公开通道需另行确认 Cloudflare 转发数据；手机能否通过微信域名校验须实际检查。
+
+当前 Vercel 尚未部署；本机已用合成示例通过真实智谱五项解读，小程序手机 AI 尚未验证。要启用 AI，先按[部署说明](MOBILE_DEPLOY.md)部署本仓库后端，国内方案在服务端设置 `AI_PROVIDER=zhipu`、`ZHIPU_API_KEY`、`AI_ACCESS_TOKEN`，`ZHIPU_MODEL` 仅允许当前免费定价的 `glm-4.7-flash` / `glm-4-flash-250414`，本机已验证后者。然后在 `miniprogram/config.js` 的 `apiBaseUrl` 填公开 HTTPS 网站地址，保持 `aiProvider: 'zhipu'` 与服务端一致。免费模型仍需注册并创建智谱标准 API Key，不自动切换到付费模型。
 
 **不要将任何模型 API Key 写入小程序源码、配置或请求参数。** 页面中的访问口令是部署者提供的测试口令，只保留在当前页面内存，离页清空。用户明确同意后，小程序将出生信息发送给后端重新排盘；后端把必要的命盘结构发送给页面显示的服务商（当前国内方案为智谱 BigModel）。历史不保存 AI 回答或口令。
 
