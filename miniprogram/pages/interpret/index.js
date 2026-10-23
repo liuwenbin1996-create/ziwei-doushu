@@ -51,8 +51,13 @@ Page({
         },
         fail: failure => {
           if (!this.isCurrent(revision, requestFingerprint)) return;
-          const timedOut = failure && typeof failure.errMsg === 'string' && /timeout/i.test(failure.errMsg);
-          this.setData({ error: timedOut ? 'AI 解读等待超时，请稍后重试。' : '连接 AI 服务失败，请检查网络和小程序的合法请求域名配置。' });
+          const message = failure && typeof failure.errMsg === 'string' ? failure.errMsg : '';
+          const error = /url not in domain list/i.test(message)
+            ? '微信拦截了请求：服务地址未加入小程序合法请求域名。请联系部署者检查微信后台配置。'
+            : /timeout/i.test(message)
+              ? 'AI 解读等待超时，请稍后重试。'
+              : '连接 AI 服务失败，请检查网络和小程序的合法请求域名配置。';
+          this.setData({ error });
         },
         complete: () => { if (!this.isCurrent(revision, requestFingerprint)) return; this._task = null; this.setData({ busy: false }); },
       });

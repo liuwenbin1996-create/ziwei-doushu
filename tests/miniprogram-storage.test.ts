@@ -111,3 +111,10 @@ test('mini AI displays server and timeout errors and releases the busy state', (
   h.requests[0].fail({ errMsg: 'request:fail timeout' }); h.requests[0].complete();
   assert.match(h.page.data.error, /超时/); assert.equal(h.page.data.busy, false);
 });
+test('mini AI identifies WeChat domain rejection without exposing raw platform diagnostics', () => {
+  const h = interpretHarness(); h.ready(); h.page.onInterpret();
+  h.requests[0].fail({ errMsg: 'request:fail url not in domain list https://private-preview.test' }); h.requests[0].complete();
+  assert.match(h.page.data.error, /合法请求域名/);
+  assert.ok(!h.page.data.error.includes('private-preview.test'));
+  assert.equal(h.page.data.analysis, null); assert.equal(h.page.data.busy, false);
+});
