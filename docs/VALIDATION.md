@@ -22,4 +22,4 @@
 
 没有调用真实 OpenAI API，未验证账户模型权限、余额、网络或真实解读效果。没有实体 iPhone Safari 主屏幕安装验收。PWA manifest/图标通过 HTTP 检查；离线与缓存行为通过 Node VM 回归，未把此结果当作实体设备安装成功。没有执行 Vercel 公网部署。
 
-代码可本地测试。GitHub PR 需要可写 Fork/仓库；当前上游连接 permissions.push=false，尚未取得可写仓库，因此未创建 PR。
+2026-10-23：代码已发布到 [个人 Fork](https://github.com/liuwenbin1996-create/ziwei-doushu)，并创建 [PR #1](https://github.com/liuwenbin1996-create/ziwei-doushu/pull/1)。首版提交的两项 GitHub 自动检查已通过。部署前进一步将 package.json 与锁文件的 Node 版本固定为 22.x，保持与已验证环境一致。公网部署状态以实际部署结果为准。
