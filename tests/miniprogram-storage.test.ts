@@ -62,7 +62,7 @@ function interpretHarness(apiBaseUrl = 'https://ziwei.test') {
   const app = { globalData: { currentRequest: JSON.parse(JSON.stringify(request)), currentResult: {} } };
   vm.runInNewContext(readFileSync('miniprogram/pages/interpret/index.js', 'utf8'), {
     Page: (page: any) => { definition = page; }, getApp: () => app, JSON,
-    require: (name: string) => name === '../../config' ? { apiBaseUrl } : { parseInterpretation },
+    require: (name: string) => name === '../../config' ? { apiBaseUrl, aiProvider: 'zhipu' } : { parseInterpretation },
     wx: { request: (options: any) => { requests.push(options); return { abort() { aborted++; options.fail({ errMsg: 'request:fail abort' }); options.complete(); } }; }, switchTab() {} },
   });
   const page: any = Object.assign({}, definition, { data: JSON.parse(JSON.stringify(definition.data)), setData(value: any) { Object.assign(this.data, value); } });
@@ -80,7 +80,8 @@ test('mini AI requires configured HTTPS, explicit consent and an in-memory token
   const call = h.requests[0];
   assert.equal(call.url, 'https://ziwei.test/api/interpret'); assert.equal(call.timeout, 55000);
   assert.equal(call.header.Authorization, 'Bearer private-test-token'); assert.equal(call.data.consent, true);
-  assert.deepEqual(Object.keys(call.data).sort(), ['birth', 'consent', 'year']);
+  assert.equal(call.data.provider, 'zhipu'); assert.equal(h.page.data.providerName, '智谱 BigModel');
+  assert.deepEqual(Object.keys(call.data).sort(), ['birth', 'consent', 'provider', 'year']);
   call.success({ statusCode: 200, data: analysis }); call.complete();
   assert.equal(h.page.data.analysis.sections.length, 5); assert.equal(h.page.data.busy, false);
 });

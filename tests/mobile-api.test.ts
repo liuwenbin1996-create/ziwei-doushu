@@ -19,6 +19,7 @@ const input = {
   year: 2026,
 };
 const env = {
+  AI_PROVIDER: "openai",
   OPENAI_API_KEY: "test-placeholder-never-used",
   AI_ACCESS_TOKEN: "unit-test-private-access",
   OPENAI_MODEL: "gpt-5.4-mini",
@@ -44,7 +45,9 @@ function request(
       Origin: "https://ziwei.test",
       ...headers,
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(
+      body && typeof body === "object" ? { provider: "openai", ...body } : body,
+    ),
   });
 }
 const success = async () => ({

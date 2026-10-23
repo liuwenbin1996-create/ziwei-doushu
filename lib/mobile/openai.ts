@@ -1,12 +1,13 @@
 import OpenAI from "openai";
 import type { ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses";
+import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import type { MobileChart } from "./chart";
 import { INTERPRETATION_SCHEMA } from "./interpretation";
-
-export interface AIConfiguration {
-  apiKey: string;
-  model: string;
-}
+import {
+  ZHIPU_BASE_URL,
+  ZHIPU_FREE_MODEL,
+  type AIConfiguration,
+} from "./ai-config";
 export interface AIResult {
   status?: string;
   output_text?: string;
@@ -28,12 +29,9 @@ const INSTRUCTIONS = `你是用简体中文解释紫微斗数盘面符号的传�
 不引用书籍、讲义、课程或作者原文，不假称专业咨询。语气中立、具体、简洁，不制造恐惧。
 仅输出符合指定 JSON schema 的内容，notice 说明传统文化学习参考的限制。`;
 
-export function buildResponseParameters(
-  chart: MobileChart,
-  model: string,
-): ResponseCreateParamsNonStreaming {
+function chartData(chart: MobileChart) {
   // 不发送公历生日、姓名、地点或客户端自由文本，尽量减少外传个人信息。
-  const data = {
+  return {
     annual: chart.annual,
     natal: {
       gender: chart.input.birth.gender,
@@ -55,6 +53,12 @@ export function buildResponseParameters(
       selectedDaXian: chart.chart.daXians[chart.annual.daXianIndex] ?? null,
     },
   };
+}
+
+export function buildResponseParameters(
+  chart: MobileChart,
+  model: string,
+): ResponseCreateParamsNonStreaming {
   return {
     model,
     store: false,
@@ -63,7 +67,7 @@ export function buildResponseParameters(
     input: [
       {
         role: "user",
-        content: `请按固定主题解读以下结构化命盘：\n${JSON.stringify(data)}`,
+        content: `请按固定主题解读以下结构化命盘：\n${JSON.stringify(chartData(chart))}`,
       },
     ],
     text: {
@@ -77,17 +81,61 @@ export function buildResponseParameters(
   };
 }
 
-export const generateInterpretation: GenerateInterpretation = async (
-  chart,
-  configuration,
-) => {
+export function buildZhipuParameters(
+  chart: MobileChart,
+): ChatCompletionCreateParamsNonStreaming & {
+  thinking: { type: "disabled" };
+} {
+  return {
+    model: ZHIPU_FREE_MODEL,
+    stream: false,
+    max_tokens: 5000,
+    thinking: { type: "disabled" },
+    response_format: { type: "json_object" },
+    messages: [
+      {
+        role: "system",
+        content: `${INSTRUCTIONS}\nJSON schema：${JSON.stringify(INTERPRETATION_SCHEMA)}`,
+      },
+      {
+        role: "user",
+        content: `请按固定主题解读以下结构化命盘：\n${JSON.stringify(chartData(chart))}`,
+      },
+    ],
+  };
+}
+
+export async function generateInterpretation(
+  chart: MobileChart,
+  configuration: AIConfiguration,
+  fetchImplementation: typeof fetch = globalThis.fetch,
+): Promise<AIResult> {
   const client = new OpenAI({
     apiKey: configuration.apiKey,
+    ...(configuration.provider === "zhipu"
+      ? { baseURL: ZHIPU_BASE_URL, organization: null, project: null }
+      : {}),
     timeout: 45_000,
     maxRetries: 0,
+    logLevel: "off",
+    fetch: fetchImplementation,
   });
+  if (configuration.provider === "zhipu") {
+    const result = await client.chat.completions.create(
+      buildZhipuParameters(chart),
+      { timeout: 45_000, maxRetries: 0 },
+    );
+    const choice = result.choices[0];
+    return {
+      status:
+        choice?.finish_reason === "stop" && !choice.message.refusal
+          ? "completed"
+          : "incomplete",
+      output_text: choice?.message.content ?? "",
+    };
+  }
   return client.responses.create(
     buildResponseParameters(chart, configuration.model),
     { timeout: 45_000, maxRetries: 0 },
   );
-};
+}

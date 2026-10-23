@@ -1,6 +1,6 @@
 # 紫微 · 观星：本地测试与 Vercel 部署
 
-这是面向 iPhone Safari 的紫微斗数手机网页版。排盘与最多 20 条历史记录在本机处理；AI 解读由服务端调用 OpenAI。历史不跨设备同步；清除浏览器网站数据会同时清除历史。简体中文界面采用墨色与金色，图标为本项目原创几何星盘。
+这是面向 iPhone Safari 的紫微斗数手机网页版。排盘与最多 20 条历史记录在本机处理；AI 解读由服务端调用智谱免费模型，也可明确选择 OpenAI。历史不跨设备同步；清除浏览器网站数据会同时清除历史。简体中文界面采用墨色与金色，图标为本项目原创几何星盘。
 
 ## 本地启动
 
@@ -23,22 +23,33 @@ npm start
 
 | 服务端变量 | 用途 |
 | --- | --- |
-| `OPENAI_API_KEY` | 你的 OpenAI 项目 API Key |
-| `OPENAI_MODEL` | 可选，默认 `gpt-5.4-mini`；可改为项目有权限的、支持 Responses 与结构化输出的文本模型 |
+| `AI_PROVIDER` | 国内方案填写 `zhipu`；使用原 OpenAI 方案时明确填写 `openai` |
+| `ZHIPU_API_KEY` | 智谱「模型标准 API」Key；国内方案必填，不能用 Coding Plan 套餐 Key 替代 |
+| `OPENAI_API_KEY` | 仅选择 `openai` 时填写 OpenAI 项目 Key |
+| `OPENAI_MODEL` | 仅 OpenAI 方案使用，可选，默认 `gpt-5.4-mini` |
 | `AI_ACCESS_TOKEN` | 建议自行生成至少 24 字符的随机访问口令，限制个人测试版的 AI 调用 |
 
 网页里的“AI 访问口令”填 `AI_ACCESS_TOKEN` 的值，不是 API Key。口令只提供给获准使用测试版的人。共享口令适合个人试用；正式开放服务需要接入用户认证、持久限流与用量配额。不要把真实密钥写进代码、URL、截图、日志或 GitHub。
 
-上述三个变量都不能使用 `NEXT_PUBLIC_` 前缀。只有 `NEXT_PUBLIC_SITE_URL` 是公开的站点地址，用于元数据。修改环境变量后重启本地服务；Vercel 上修改后重新部署。OpenAI 建议将 API Key 存在服务端环境变量或密钥管理服务中，浏览器不应接触它。[OpenAI API 认证说明](https://developers.openai.com/api/reference/overview)
+上述服务端变量都不能使用 `NEXT_PUBLIC_` 前缀。只有 `NEXT_PUBLIC_SITE_URL` 是公开的站点地址，用于元数据。修改环境变量后重启本地服务；Vercel 上修改后重新部署。OpenAI 建议将 API Key 存在服务端环境变量或密钥管理服务中，浏览器不应接触它。[OpenAI API 认证说明](https://developers.openai.com/api/reference/overview)
 
-AI 请求前需要用户同意：出生信息和所选流年发送给本站服务端；服务端重新排盘，仅将结构化星曜、农历出生年、性别和所选流年/大限发送给 OpenAI（不发送公历生日、姓名或地点）；页面会给出文化参考提示。不要在浏览器输入 OpenAI API Key。真实调用可能产生你的 OpenAI 账户费用；构建和自动测试不需要真实密钥，也不证明实际账户、模型权限、余额或网络可用。
+AI 请求前需要用户同意：出生信息和所选流年发送给本站服务端；服务端重新排盘，仅将结构化星曜、农历出生年、性别和所选流年/大限发送给所选服务商（不发送公历生日、姓名或地点）；页面会给出文化参考提示。不要在浏览器输入模型 API Key。智谱方案固定使用 `glm-4.7-flash`，截至 2026-10-24 官方输入、输出免费，仍受限流及当期政策约束，不承诺永久免费；原 OpenAI 方案按其账号规则计费；构建和自动测试不需要真实密钥，也不证明实际账户、模型权限、余额或网络可用。
+
+### 智谱免费方案
+
+1. 登录 [智谱开放平台](https://bigmodel.cn/apikey/platform)，创建「模型标准 API」Key；无需购买 Coding Plan。免费调用仍需本人账号和 Key。
+2. 服务端配置 `AI_PROVIDER=zhipu`、`ZHIPU_API_KEY` 和 `AI_ACCESS_TOKEN`，重启或重新部署。不要在小程序中填模型密钥。
+3. 国内接口固定为官方 HTTPS 地址 `https://open.bigmodel.cn/api/paas/v4/chat/completions`，使用 JSON 输出并执行服务端校验；关闭深度思考，45 秒超时，不自动重试。免费方案不接受客户端模型名称，不自动切换付费型号或 OpenAI。
+4. 微信版在 `miniprogram/config.js` 填公开的 `apiBaseUrl`，保持 `aiProvider: 'zhipu'` 与服务端一致。服务商不一致时返回 409，要求更新配置并重新同意。后端部署、微信请求域名与模型账号权限仍需实际验证。
+
+定价与接口依据：[官方定价](https://docs.bigmodel.cn/cn/guide/start/pricing)、[GLM-4.7-Flash](https://docs.bigmodel.cn/cn/guide/models/free/glm-4.7-flash)、[标准 Key 与套餐区别](https://docs.bigmodel.cn/cn/guide/start/quick-start)。本机代码和模拟测试不能证明实际账号已获免费调用权限。
 
 ## Vercel 部署
 
 1. 将分支或 Pull Request 合并到你可控制的 GitHub 仓库。
 2. 在 Vercel 选择 **Add New → Project**，导入该仓库。
 3. Framework Preset 选择 **Next.js**，Root Directory 保持仓库根目录；Node.js Version 选择 **22.x**。配置文件已指定 `npm ci` 安装、`npm run build` 构建，不设置静态导出目录。
-4. 在 **Settings → Environment Variables** 添加上表三个服务端变量。只测试排盘可暂不配置 AI；AI 会提示服务未配置。Preview 和 Production 按需要分别设置，避免把生产密钥用于不受信任的 PR 预览。
+4. 在 **Settings → Environment Variables** 按所选方案添加上表的服务端变量。只测试排盘可暂不配置 AI；AI 会提示服务未配置。Preview 和 Production 按需要分别设置，避免把生产密钥用于不受信任的 PR 预览。
 5. 将 `NEXT_PUBLIC_SITE_URL` 设置为最终 HTTPS 域名；预览阶段可使用预览域名。
 6. 点击 **Deploy**。每个已连接的 Git 分支/PR 可获得 Vercel Preview URL。正式域名可在项目的 Domains 中配置。
 7. 在 iPhone Safari 打开 Vercel 给出的 HTTPS 地址，完成下面的验收。
@@ -72,9 +83,9 @@ iPhone 没有通用的自动安装弹窗，需从 Safari 分享菜单手动添�
 
 ## 验证范围与后续迁移
 
-`npm test` 运行保留的上游排盘回归；`npm run test:mobile` 覆盖新增输入校验、历史与 AI 边界/模拟错误；CI 在没有真实密钥时执行类型检查、两组测试和生产构建。自动测试不能代替实体 iPhone Safari 安装、实际 OpenAI 调用和公网 Vercel 部署。交付报告会分别说明哪些已运行，哪些还需你的环境完成。
+`npm test` 运行保留的上游排盘回归；`npm run test:mobile` 覆盖新增输入校验、历史与 AI 边界/模拟错误；CI 在没有真实密钥时执行类型检查、两组测试和生产构建。自动测试不能代替实体 iPhone Safari 安装、实际模型调用和公网 Vercel 部署。交付报告会分别说明哪些已运行，哪些还需你的环境完成。
 
-后续迁移微信小程序时，复用纯 TypeScript 领域类型、输入校验、排盘适配与 HTTP 数据结构；将 Web DOM、CSS、localStorage、PWA 安装逻辑换成小程序页面、组件与存储 API。OpenAI 调用仍留在服务端，通过 HTTPS 接口提供给小程序，并按微信要求配置合法域名及适用的发布审核材料。小程序界面需要重写，不能直接把 Next.js 页面作为原生小程序运行。
+后续迁移微信小程序时，复用纯 TypeScript 领域类型、输入校验、排盘适配与 HTTP 数据结构；将 Web DOM、CSS、localStorage、PWA 安装逻辑换成小程序页面、组件与存储 API。模型调用仍留在服务端，通过 HTTPS 接口提供给小程序，并按微信要求配置合法域名及适用的发布审核材料。小程序界面需要重写，不能直接把 Next.js 页面作为原生小程序运行。
 
 许可范围和解读资料限制见 [LICENSE_REVIEW.md](./LICENSE_REVIEW.md)。
 
@@ -82,4 +93,4 @@ iPhone 没有通用的自动安装弹窗，需从 Safari 分享菜单手动添�
 
 生产构建已在 Node 22 本机通过；上游排盘回归通过，包含 768 个采样命盘。手机尺寸浏览器已检查 12 宫、四化切换、历史保存与删除、AI 未配置提示和横向溢出。完整 npm 官方依赖审查为 0 项漏洞。详情与测试数量以最终交付记录为准。
 
-尚未使用真实 OpenAI Key 发起付费请求；尚未完成实体 iPhone Safari 主屏幕安装和 Vercel 公网部署。AI 费用、模型权限、网络与真实解读效果需部署者实际试用验证。
+尚未使用真实模型 Key 发起外部请求；尚未完成实体 iPhone Safari 主屏幕安装和 Vercel 公网部署。AI 费用、模型权限、网络与真实解读效果需部署者实际试用验证。

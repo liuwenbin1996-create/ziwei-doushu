@@ -2,6 +2,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { createMobileChart, parseMobileRequest } from "./chart";
 import { parseInterpretation } from "./interpretation";
 import { generateInterpretation, type GenerateInterpretation } from "./openai";
+import { resolveAIConfiguration } from "./ai-config";
 
 const MAX_BODY_BYTES = 16 * 1024;
 class RequestError extends Error {
@@ -118,9 +119,9 @@ export async function handleInterpret(
   try {
     checkOrigin(request);
     const env = dependencies.env ?? process.env;
-    const apiKey = env.OPENAI_API_KEY?.trim();
+    const configuration = resolveAIConfiguration(env);
     const accessToken = env.AI_ACCESS_TOKEN?.trim();
-    if (!apiKey || !accessToken)
+    if (!configuration || !accessToken)
       throw new RequestError("AI 解读尚未配置，请联系网站管理员。", 503);
     const authorization = request.headers.get("authorization") ?? "";
     const supplied = authorization.startsWith("Bearer ")
@@ -139,16 +140,20 @@ export async function handleInterpret(
       !("consent" in body) ||
       body.consent !== true
     ) {
-      throw new RequestError("请先同意将命盘数据发送给 OpenAI 生成解读。");
+      throw new RequestError(
+        "请先同意将命盘数据发送给所选 AI 服务商生成解读。",
+      );
     }
+    if (!("provider" in body) || body.provider !== configuration.provider)
+      throw new RequestError(
+        "AI 服务商配置已变化，请刷新页面或联系部署者更新小程序配置后重新同意。",
+        409,
+      );
     const chart = validatedChart(body);
     try {
       const result = await (dependencies.generate ?? generateInterpretation)(
         chart,
-        {
-          apiKey,
-          model: env.OPENAI_MODEL?.trim() || "gpt-5.4-mini",
-        },
+        configuration,
       );
       if (result.status !== "completed" || !result.output_text)
         throw new Error("Incomplete response");

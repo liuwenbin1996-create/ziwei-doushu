@@ -1,15 +1,15 @@
 <view class="page">
   <view class="hero interpret-hero"><text class="eyebrow">以星为镜 · 由你选择</text><text class="title">让星图，更好懂</text><text class="subtitle">把宫位和星曜，转成可观察的生活提示。</text></view>
   <view class="topic-list"><text wx:for="{{topics}}" wx:key="*this" class="tag">{{item}}</text></view>
-  <view wx:if="{{!hasChart}}" class="card interpret-empty"><text class="card-title">先起一张命盘</text><text class="muted">输入出生日期、时辰和性别，再查看五个维度的文化解读。</text><button class="button button-secondary" bindtap="onStart">去排盘</button></view>
+  <view wx:if="{{!hasChart}}" class="card interpret-empty"><text class="card-title">先起一张命盘</text><text class="muted">输入出生日期、时辰和性别。启用 AI 服务后可查看五个维度的文化解读。</text><button class="button button-secondary" bindtap="onStart">去排盘</button></view>
   <view wx:else class="card interpret-controls">
     <text class="card-title">本次解读的命盘</text><text class="chart-summary">{{chartSummary}}</text>
-    <view wx:if="{{!configured}}" class="notice">AI 服务尚未连接。当前可在本机排盘、查看星曜和保存历史；连接服务后再生成解读。</view>
+    <view wx:if="{{!configured}}" class="notice">AI 解读暂未启用，需要部署并配置 AI 服务。当前可在本机排盘、查看星曜和保存历史。</view>
     <block wx:if="{{configured}}">
       <view class="token-heading"><text class="label">AI 访问口令</text><text class="muted token-note">由部署者提供</text></view>
-      <input class="token-input" password="{{true}}" value="{{token}}" maxlength="512" placeholder="不是 OpenAI API Key" placeholder-class="token-placeholder" bindinput="onTokenInput" disabled="{{busy}}" />
+      <input class="token-input" password="{{true}}" value="{{token}}" maxlength="512" placeholder="不是模型 API Key" placeholder-class="token-placeholder" bindinput="onTokenInput" disabled="{{busy}}" />
       <text class="muted token-hint">口令只在当前页面内存中使用，离开页面即清空。</text>
-      <checkbox-group bindchange="onConsentChange"><label class="consent-row"><checkbox value="consent" checked="{{consent}}" color="#d4b880" disabled="{{busy}}" /><text>同意将出生日期、时辰、性别和所选流年发送至配置的服务端。服务端重新排盘后，将结构化命盘发送给 OpenAI 生成本次解读。</text></label></checkbox-group>
+      <checkbox-group bindchange="onConsentChange"><label class="consent-row"><checkbox value="consent" checked="{{consent}}" color="#d4b880" disabled="{{busy}}" /><text>同意将出生日期、时辰、性别和所选流年发送至配置的服务端。服务端重新排盘后，将结构化命盘发送给 {{providerName}} 生成本次解读。</text></label></checkbox-group>
       <button class="button interpret-generate" bindtap="onInterpret" loading="{{busy}}" disabled="{{!consent || !token || busy}}">{{busy ? '正在解读星图…' : '生成 AI 解读'}}</button>
       <text wx:if="{{busy}}" class="muted progress-message">正在整理十二宫、四化与流年，请稍候。切换页面将取消本次等待。</text>
     </block>
@@ -23,5 +23,5 @@
     </view>
     <view class="notice">{{analysis.notice}}</view>
   </view>
-  <view class="notice interpret-disclaimer">仅供传统文化学习与自我观察，非科学预测。AI 可能理解有误，不用于医疗、投资或婚姻等重大决策。AI 解读需联网，实际调用可能产生部署者的 API 费用。</view>
+  <view class="notice interpret-disclaimer">仅供传统文化学习与自我观察，非科学预测。AI 可能理解有误，不用于医疗、投资或婚姻等重大决策。AI 解读需联网，当前国内方案使用智谱免费模型，仍受平台限流和当期政策约束。</view>
 </view>

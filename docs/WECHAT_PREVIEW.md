@@ -31,9 +31,9 @@
 
 ## AI 后端配置
 
-当前 Vercel 尚未部署，真实 AI 请求未验证。要启用 AI，先按[部署说明](MOBILE_DEPLOY.md)部署本仓库后端，在服务端设置 `OPENAI_API_KEY`、`AI_ACCESS_TOKEN`；`OPENAI_MODEL` 可选。然后在 `miniprogram/config.js` 的 `apiBaseUrl` 填公开 HTTPS 网站地址。
+当前 Vercel 尚未部署，真实 AI 请求未验证。要启用 AI，先按[部署说明](MOBILE_DEPLOY.md)部署本仓库后端，国内方案在服务端设置 `AI_PROVIDER=zhipu`、`ZHIPU_API_KEY`、`AI_ACCESS_TOKEN`，固定使用当前免费定价的 `glm-4.7-flash`。然后在 `miniprogram/config.js` 的 `apiBaseUrl` 填公开 HTTPS 网站地址，保持 `aiProvider: 'zhipu'` 与服务端一致。免费模型仍需注册并创建智谱标准 API Key，不自动切换到付费模型。
 
-**不要将 OpenAI API Key 写入小程序源码、配置或请求参数。** 页面中的访问口令是部署者提供的测试口令，只保留在当前页面内存，离页清空。用户明确同意后，小程序将出生信息发送给后端重新排盘；后端把必要的命盘结构发送给 OpenAI。历史不保存 AI 回答或口令。
+**不要将任何模型 API Key 写入小程序源码、配置或请求参数。** 页面中的访问口令是部署者提供的测试口令，只保留在当前页面内存，离页清空。用户明确同意后，小程序将出生信息发送给后端重新排盘；后端把必要的命盘结构发送给页面显示的服务商（当前国内方案为智谱 BigModel）。历史不保存 AI 回答或口令。
 
 使用真实 AppID 时，还需要在官方后台配置合法请求域名，分别验证手机网络与 API 访问。不要用关闭域名或证书校验的方式替代正式配置。
 
