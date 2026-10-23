@@ -43,6 +43,9 @@ export function assertInterpretationGrounding(
       .flatMap((p) => p.stars.map((s) => s.name))
       .filter((n) => n.length >= 2),
   );
+  const palaceNames = chart.chart.palaces.map((p) =>
+    p.name.endsWith("宫") ? p.name : p.name + "宫",
+  );
   for (const section of value.sections) {
     if (
       JSON.stringify(section.observations) !==
@@ -58,7 +61,9 @@ export function assertInterpretationGrounding(
       throw new Error("AI added deterministic or investment advice");
     // 具体星曜、干支与年份只允许出现在可核对的事实栏，避免模型另编位置。
     if (
-      [...starNames].some((name) => commentary.includes(name)) ||
+      [...starNames, ...palaceNames].some((name) =>
+        commentary.includes(name),
+      ) ||
       /[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]|(?:19|20|21)\d{2}|天干|地支/.test(
         commentary,
       )

@@ -43,6 +43,9 @@ test("altered palace evidence and invented star positions are rejected", () => {
   const invented = answer();
   invented.sections[4].summary = "文昌位于夫妻宫，地支未。";
   assert.throws(() => assertInterpretationGrounding(invented, chart));
+  const relocated = answer();
+  relocated.sections[0].summary = "命宫位于未宫。";
+  assert.throws(() => assertInterpretationGrounding(relocated, chart));
 });
 
 test("budget guidance cannot turn into investment recommendations", () => {
