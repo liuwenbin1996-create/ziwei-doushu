@@ -31,7 +31,7 @@
 
 ## AI 后端配置
 
-当前选择[电脑运行后端和临时 HTTPS 通道](LOCAL_AI_PREVIEW.md)。服务只监听本机并保留访问口令；用户已明确同意出生信息、AI 访问口令与解读结果经 Cloudflare 转发，通道已启动。公网真实解读成功，微信开发工具仍因临时域名未在合法列表而拦截，手机 AI 尚未通过。
+当前选择[电脑运行后端和临时 HTTPS 通道](LOCAL_AI_PREVIEW.md)。用户曾明确同意出生信息、AI 访问口令与解读结果经 Cloudflare 转发，公网真实解读已成功；微信开发工具因临时域名未在合法列表而拦截。用户选择保持校验，等待注册正式小程序账号，因此本次通道和本机 API 已关闭，桌面副本的失效地址已清空。手机 AI 尚未通过。
 
 当前按用户要求不使用 Vercel；本机及公网 API 已用合成示例通过真实智谱五项解读。要启用 AI，先按[本机预览说明](LOCAL_AI_PREVIEW.md)启动后端，或按[部署说明](MOBILE_DEPLOY.md)部署本仓库后端，国内方案在服务端设置 `AI_PROVIDER=zhipu`、`ZHIPU_API_KEY`、`AI_ACCESS_TOKEN`，`ZHIPU_MODEL` 仅允许当前免费定价的 `glm-4.7-flash` / `glm-4-flash-250414`，本机已验证后者。然后在 `miniprogram/config.js` 的 `apiBaseUrl` 填公开 HTTPS 服务端地址，保持 `aiProvider: 'zhipu'` 与服务端一致。免费模型仍需注册并创建智谱标准 API Key，不自动切换到付费模型。
 
