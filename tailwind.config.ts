@@ -1,6 +1,4 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+const config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -28,10 +26,10 @@ const config: Config = {
           dim: "#7A5F1A",
         },
         // 四化语义色
-        lu:   "#2D7A4A",
+        lu: "#2D7A4A",
         quan: "#1A56A8",
-        ke:   "#8A7018",
-        ji:   "#A83228",
+        ke: "#8A7018",
+        ji: "#A83228",
       },
       fontFamily: {
         sans: ["var(--font)"],
@@ -58,11 +56,11 @@ const config: Config = {
       },
       keyframes: {
         fadeUp: {
-          "0%":   { opacity: "0", transform: "translateY(20px)" },
+          "0%": { opacity: "0", transform: "translateY(20px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         fadeIn: {
-          "0%":   { opacity: "0" },
+          "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
       },
