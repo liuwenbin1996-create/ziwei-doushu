@@ -12,7 +12,7 @@ view, text, button, input, picker { box-sizing: border-box; }
 .row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
 .label { color: #b6c1b8; font-size: 25rpx; }
 .value { color: #edf0e9; }
-.button { color: #19231e; background: #e7c98c; border-radius: 16rpx; margin: 24rpx 0 0; padding: 6rpx 24rpx; font-size: 29rpx; font-weight: 600; min-height: 88rpx; }
+.button { width: 100% !important; min-width: 0; color: #19231e; background: #e7c98c; border-radius: 16rpx; margin: 24rpx 0 0; padding: 6rpx 24rpx; font-size: 29rpx; font-weight: 600; min-height: 88rpx; }
 .button::after { border: 0; }
 .button[disabled] { color: #8a958d; background: #303b33; }
 .button-secondary { color: #e7c98c; background: transparent; border: 1rpx solid #58634b; }

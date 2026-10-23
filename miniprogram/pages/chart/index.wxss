@@ -1,7 +1,7 @@
 .chart-heading { padding: 6rpx 4rpx 24rpx; }
 .chart-title { font-family: 'Songti SC', serif; font-size: 37rpx; margin-bottom: 12rpx; }
 .modes { background: #1d2921; border: 1rpx solid #3c483b; border-radius: 16rpx; padding: 6rpx; gap: 6rpx; }
-.mode { flex: 1; margin: 0; background: transparent; color: #b6c1b8; font-size: 27rpx; padding: 0; border-radius: 10rpx; }
+.mode { flex: 1; min-height: 88rpx; line-height: 88rpx; margin: 0; background: transparent; color: #b6c1b8; font-size: 27rpx; padding: 0; border-radius: 10rpx; }
 .mode::after, .decade::after { border: 0; }
 .chosen { background: #e7c98c; color: #19231e; }
 .year-row { padding: 24rpx 4rpx; }
@@ -29,10 +29,10 @@
 .star-list { display: flex; flex-wrap: wrap; gap: 14rpx 20rpx; margin: 10rpx 0 22rpx; }
 .star-item { font-size: 26rpx; }
 .star-major { color: #e7c98c; }
-.decades { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 18rpx; }
-.decade { width: calc(33.333% - 8rpx); padding: 14rpx 4rpx; border: 1rpx solid #58634b; border-radius: 12rpx; color: #cbd5c8; background: transparent; font-size: 24rpx; line-height: 1.5; margin: 0; }
+.decades { display: flex; flex-wrap: wrap; margin-top: 18rpx; }
+.decade { flex: 0 0 30%; width: 30%; min-width: 0; padding: 14rpx 4rpx; border: 1rpx solid #58634b; border-radius: 12rpx; color: #cbd5c8; background: transparent; font-size: 24rpx; line-height: 1.5; margin: 0 1.5% 12rpx; }
 .decade.chosen { color: #19231e; background: #e7c98c; }
 .decade.chosen .muted { color: #45513a; }
-.decade[disabled] { color: #727e73; background: #19231e; border-color: #344035; }
+.decade.disabled { color: #727e73 !important; background: #19231e !important; border-color: #344035; }
 .decade .muted { font-size: 21rpx; }
 .empty { margin-top: 60rpx; }

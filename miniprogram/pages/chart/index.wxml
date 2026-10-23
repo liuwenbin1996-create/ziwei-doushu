@@ -48,7 +48,7 @@
     <view class="card">
       <view class="card-title">大限 <text class="muted">{{decadeLabel}}</text></view>
       <view class="muted">点击区间，切换到该大限的起始农历年。</view>
-      <view class="decades"><button wx:for="{{decades}}" wx:key="index" class="decade {{item.active ? 'chosen' : ''}}" data-index="{{item.index}}" bindtap="changeDecade" disabled="{{item.disabled}}"><view>{{item.label}}</view><view class="muted">{{item.palaceName}}</view></button></view>
+      <view class="decades"><button wx:for="{{decades}}" wx:key="index" class="decade {{item.active ? 'chosen' : ''}} {{item.disabled ? 'disabled' : ''}}" data-index="{{item.index}}" bindtap="changeDecade" disabled="{{item.disabled}}"><view>{{item.label}}</view><view class="muted">{{item.palaceName}}</view></button></view>
     </view>
     <button class="button" bindtap="save">保存命盘到本机</button>
     <button class="button button-secondary" bindtap="goAI">前往 AI 解读</button>
