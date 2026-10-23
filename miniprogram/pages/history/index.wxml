@@ -1,0 +1,12 @@
+<view class="page">
+  <view class="hero history-hero"><text class="eyebrow">本机星图 · 留下观察</text><text class="title">我的命盘历史</text><text class="subtitle">每次回看，都可以有新的理解。</text></view>
+  <view class="notice">仅保存在当前小程序，最多 20 张。不会同步到网页版或其他设备，清除小程序数据后无法保留。AI 解读和访问口令不会存入历史。</view>
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+  <view class="row history-heading"><text class="card-title">已保存 {{entries.length}} / 20</text><button wx:if="{{entries.length || corrupt}}" class="history-clear" bindtap="onClear">{{corrupt ? '重置历史' : '清空全部'}}</button></view>
+  <view wx:if="{{!entries.length && !corrupt}}" class="card history-empty"><text class="history-empty-symbol">✧</text><text class="card-title">还没有保存的命盘</text><text class="muted">排盘后，在命盘页点击「保存命盘」。</text><button class="button button-secondary history-start" bindtap="onStart">去排一张命盘</button></view>
+  <view wx:for="{{entries}}" wx:key="id" class="card history-record">
+    <view class="record-content" data-id="{{item.id}}" bindtap="onRestore"><text class="record-date">{{item.date}}</text><text class="muted">{{item.hour}} · {{item.gender}} · {{item.year}} 流年</text><text class="record-saved">{{item.savedAt}} 保存</text></view>
+    <view class="record-actions"><button class="button button-secondary record-open" data-id="{{item.id}}" bindtap="onRestore">查看命盘</button><button class="record-delete" data-id="{{item.id}}" bindtap="onDelete">删除</button></view>
+  </view>
+  <view class="muted history-footnote">以传统文化为镜，结合真实经历观察自己。命盘不作为重大决策依据。</view>
+</view>

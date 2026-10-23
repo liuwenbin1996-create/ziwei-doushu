@@ -1,0 +1,21 @@
+# 紫微 · 观星：微信小程序本机版
+
+导入本目录到“微信开发者工具”，不要选择上层 Next.js 仓库。四个标签为排盘、命盘、AI 解读、历史；排盘和历史在本机运行。
+
+项目已经包含 `utils/chart-engine.js`，导入后无需“构建 npm”。`touristappid` 是无真实 AppID 的游客占位；当前工具是否提供游客导入、手机预览等能力尚未实测。若需要扫码登录，请自行完成。
+
+当前电脑尚未安装开发者工具，未完成工具内编译或手机验证；本机引擎和页面逻辑的 20 项自动测试已通过。AI 后端未配置，没有调用真实 OpenAI。
+
+开发修改后，在上层仓库根目录运行：
+
+```bash
+npm ci
+npm run build:miniprogram
+npm run test:miniprogram
+```
+
+AI 需要公开 HTTPS 后端地址，填写在 `config.js` 的 `apiBaseUrl`。OpenAI Key 只放后端环境变量，不能写进本目录。页面输入的私有访问口令离页清空，不进入历史。
+
+完整导入与部署说明见 [仓库文档](https://github.com/liuwenbin1996-create/ziwei-doushu/blob/feat/wechat-miniprogram-preview/docs/WECHAT_PREVIEW.md)。源码测试不能代替微信模拟器和手机验证。后续使用真实 AppID 时需核对网络配置、服务类目与平台审核要求，本轮没有上传或发布。
+
+分发时保留 [LICENSE](LICENSE) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。引擎使用 MIT 代码与日历依赖，未加载受非商业许可限制的课程原话或商业断语库。

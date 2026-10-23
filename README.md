@@ -4,12 +4,15 @@
 
 **运行与 Vercel 部署：[docs/MOBILE_DEPLOY.md](docs/MOBILE_DEPLOY.md)**
 
+**原生微信小程序本机预览：[docs/WECHAT_PREVIEW.md](docs/WECHAT_PREVIEW.md)**。导入 `miniprogram/`，包含离线排盘与本机历史；默认未配置 AI 后端。模拟器与真机验证状态见该文档。
+
 功能：十二宫、主辅星、生年/大限/流年四化、农历流年、本地命盘历史、OpenAI 服务端 AI 解读、PWA。
 
 ```bash
 npm ci
 npm test
 npm run test:mobile
+npm run test:miniprogram
 npm run typecheck
 npm run build
 npm start -- --hostname 0.0.0.0

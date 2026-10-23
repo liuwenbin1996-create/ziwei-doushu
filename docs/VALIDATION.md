@@ -23,3 +23,15 @@
 没有调用真实 OpenAI API，未验证账户模型权限、余额、网络或真实解读效果。没有实体 iPhone Safari 主屏幕安装验收。PWA manifest/图标通过 HTTP 检查；离线与缓存行为通过 Node VM 回归，未把此结果当作实体设备安装成功。没有执行 Vercel 公网部署。
 
 2026-10-23：代码已发布到 [个人 Fork](https://github.com/liuwenbin1996-create/ziwei-doushu)，并创建 [PR #1](https://github.com/liuwenbin1996-create/ziwei-doushu/pull/1)。首版提交的两项 GitHub 自动检查已通过。部署前进一步将 package.json 与锁文件的 Node 版本固定为 22.x，保持与已验证环境一致。公网部署状态以实际部署结果为准。
+
+## 微信原生本机版（2026-10-23）
+
+- Node 22.22.1；esbuild 0.28.2；Next.js 升至 16.4.3，修复 npm 官方审计新报告的 Next.js 漏洞。安装后的 npm audit 为 0 项漏洞。
+- `npm run build:miniprogram`：独立 CommonJS 引擎生成成功，873460 字节，无外部模块依赖，已提交生成文件供直接导入。六个实际打包依赖及额外许可通知随项目保留。
+- `npm run test:miniprogram`：20 项通过，涵盖去除 Intl / Node / 浏览器全局变量的 VM 排盘、网页结果一致性、日期边界、晚子时、四化、大限流年、原生页面逻辑、存储与模拟 AI 请求。没有真实 OpenAI 调用或费用。
+- `npm run typecheck`：通过。
+- `npm test` 原全部回归与 `npm run test:mobile` 23 项通过。
+- `npm run build -- --webpack`：生产编译、类型检查、39 个静态页面生成通过。默认 Turbopack 在当前宿主因创建本机端口 EPERM 失败，提权重试仍失败；改用 Next.js 官方支持的 Webpack 构建完成验证。未据此声称默认 Turbopack 已在本机通过。
+- 测试脚本采用 `node --import tsx`，避免 tsx CLI 为测试额外创建 IPC 监听端口。
+
+当前电脑没有微信开发者工具。官方下载页的自动读取失败，电脑界面访问也被工具安全策略终止，已停止相关操作。**未进行微信开发者工具真实编译、WXSS 视觉验收、手机扫码预览、真机调试或上传审核。** `touristappid` 是本机开发占位，不代表账号或真实手机预览能力。AI 默认未配置；Vercel 尚未部署。导入步骤与后续配置见 [WECHAT_PREVIEW.md](WECHAT_PREVIEW.md)。

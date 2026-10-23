@@ -1,0 +1,57 @@
+<view class="page">
+  <view wx:if="{{!hasChart}}" class="card empty">
+    <view class="card-title">先起一张命盘</view>
+    <view class="muted">填写出生日期、时辰和性别，即可在本机排盘。</view>
+    <button class="button" bindtap="goInput">去填写信息</button>
+  </view>
+  <block wx:else>
+    <view class="chart-heading">
+      <view class="eyebrow">十 二 宫 · {{modeName}}</view>
+      <view class="chart-title">一盘星辰，一份观察</view>
+      <view class="muted">{{birthLabel}}</view>
+    </view>
+    <view class="modes row">
+      <button class="mode {{mode === 'natal' ? 'chosen' : ''}}" data-mode="natal" bindtap="changeMode">本命</button>
+      <button class="mode {{mode === 'decade' ? 'chosen' : ''}}" data-mode="decade" bindtap="changeMode">大限</button>
+      <button class="mode {{mode === 'annual' ? 'chosen' : ''}}" data-mode="annual" bindtap="changeMode">流年</button>
+    </view>
+    <view class="year-row row">
+      <text class="label">农历流年 · 正月初一换年</text>
+      <picker mode="selector" range="{{years}}" value="{{yearIndex}}" bindchange="changeYear"><view class="year-picker">{{year}} 年 ›</view></picker>
+    </view>
+    <view class="error" wx:if="{{error}}">{{error}}</view>
+    <view class="notice" wx:if="{{notice}}">{{notice}}</view>
+    <view class="board">
+      <view wx:for="{{palaces}}" wx:key="branch" class="palace {{item.selected ? 'selected' : ''}} {{item.active ? 'active' : ''}}" style="{{item.position}}" data-branch="{{item.branch}}" bindtap="selectPalace">
+        <view class="palace-head"><text class="palace-name">{{item.name}}</text><text class="body-tag" wx:if="{{item.isShenGong}}">身</text></view>
+        <view wx:for="{{item.majors}}" wx:for-item="star" wx:key="name" class="major"><text>{{star.name}}</text><text class="hua {{star.transform === '忌' ? 'ji' : ''}}" wx:if="{{star.transform}}">{{star.transform}}</text></view>
+        <view wx:if="{{!item.majors.length}}" class="no-star">空宫</view>
+        <view class="minor-line"><text wx:for="{{item.minors}}" wx:for-item="star" wx:key="name">{{star.name}}<text class="hua" wx:if="{{star.transform}}">{{star.transform}}</text> </text><text wx:if="{{item.extra}}">+{{item.extra}}</text></view>
+        <view class="palace-foot"><text>{{item.branchName}}</text><text>{{item.ageRange}}</text></view>
+      </view>
+      <view class="board-center">
+        <view class="center-symbol">紫微</view>
+        <view class="center-label">{{wuxing}}</view>
+        <view class="muted center-small">农历 {{lunarLabel}}</view>
+        <view class="center-label">{{year}} · 虚岁 {{age}}</view>
+        <view class="center-small">命主 {{mingZhu}} · 身主 {{shenZhu}}</view>
+        <view class="center-hint">点宫位查看星曜</view>
+      </view>
+    </view>
+    <view class="transform-row"><text class="tag" wx:for="{{transforms}}" wx:key="label">{{item.name}} · 化{{item.label}}</text></view>
+    <view class="card detail" wx:if="{{selected}}">
+      <view class="row"><view class="card-title">{{selected.name}} <text class="muted">{{selected.branchName}}</text></view><text class="tag" wx:if="{{selected.isMingGong}}">本命命宫</text></view>
+      <view class="star-list"><view wx:for="{{selected.stars}}" wx:key="name" class="star-item {{item.type === 'major' ? 'star-major' : ''}}"><text>{{item.name}}</text><text class="muted" wx:if="{{item.brightnessRaw}}"> {{item.brightnessRaw}}</text><text class="hua {{item.transform === '忌' ? 'ji' : ''}}" wx:if="{{item.transform}}"> 化{{item.transform}}</text></view></view>
+      <view class="muted" wx:if="{{selected.isEmpty}}">本宫无主星；对宫为{{selected.borrowedFromName}}。此处不将借星重复计入主星总数。</view>
+      <view class="muted" wx:if="{{selected.ageRange}}">本宫大限：虚岁 {{selected.ageRange}} 岁</view>
+    </view>
+    <view class="card">
+      <view class="card-title">大限 <text class="muted">{{decadeLabel}}</text></view>
+      <view class="muted">点击区间，切换到该大限的起始农历年。</view>
+      <view class="decades"><button wx:for="{{decades}}" wx:key="index" class="decade {{item.active ? 'chosen' : ''}}" data-index="{{item.index}}" bindtap="changeDecade" disabled="{{item.disabled}}"><view>{{item.label}}</view><view class="muted">{{item.palaceName}}</view></button></view>
+    </view>
+    <button class="button" bindtap="save">保存命盘到本机</button>
+    <button class="button button-secondary" bindtap="goAI">前往 AI 解读</button>
+    <view class="footer"><view>金色圆点标记当前层命宫 · 四化随本命／大限／流年切换</view><view>传统文化参考，不作为医疗、投资或关系决策依据。</view></view>
+  </block>
+</view>

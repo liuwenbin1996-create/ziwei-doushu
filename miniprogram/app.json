@@ -1,0 +1,24 @@
+{
+  "pages": ["pages/index/index", "pages/chart/index", "pages/interpret/index", "pages/history/index"],
+  "window": {
+    "navigationBarTitleText": "紫微 · 观星",
+    "navigationBarBackgroundColor": "#141d1b",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#101815",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#a9b5ac",
+    "selectedColor": "#e7c98c",
+    "backgroundColor": "#141d1b",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "排盘" },
+      { "pagePath": "pages/chart/index", "text": "命盘" },
+      { "pagePath": "pages/interpret/index", "text": "AI 解读" },
+      { "pagePath": "pages/history/index", "text": "历史" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

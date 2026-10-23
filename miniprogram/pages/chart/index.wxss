@@ -1,0 +1,38 @@
+.chart-heading { padding: 6rpx 4rpx 24rpx; }
+.chart-title { font-family: 'Songti SC', serif; font-size: 37rpx; margin-bottom: 12rpx; }
+.modes { background: #1d2921; border: 1rpx solid #3c483b; border-radius: 16rpx; padding: 6rpx; gap: 6rpx; }
+.mode { flex: 1; margin: 0; background: transparent; color: #b6c1b8; font-size: 27rpx; padding: 0; border-radius: 10rpx; }
+.mode::after, .decade::after { border: 0; }
+.chosen { background: #e7c98c; color: #19231e; }
+.year-row { padding: 24rpx 4rpx; }
+.year-picker { color: #e7c98c; padding: 8rpx 14rpx; border: 1rpx solid #58634b; border-radius: 10rpx; }
+.board { position: relative; width: 100%; height: 702rpx; background: #19231e; border: 1rpx solid #65704f; border-radius: 16rpx; overflow: hidden; }
+.palace { position: absolute; width: 25%; height: 25%; border: 1rpx solid #3e4b3c; padding: 8rpx 6rpx 25rpx; overflow: hidden; }
+.palace.selected { background: #2c392b; border: 2rpx solid #e7c98c; z-index: 2; }
+.palace.active .palace-name::before { content: '·'; color: #e7c98c; font-weight: bold; margin-right: 2rpx; }
+.palace-head { display: flex; align-items: center; justify-content: space-between; line-height: 1.2; margin-bottom: 6rpx; }
+.palace-name { font-size: 23rpx; color: #c7d2c6; }
+.body-tag { font-size: 18rpx; color: #e7c98c; }
+.major { color: #e7c98c; font-size: 26rpx; line-height: 1.3; white-space: nowrap; }
+.hua { font-size: 18rpx; color: #f6d488; padding-left: 3rpx; }
+.ji { color: #ffb09a; }
+.minor-line { color: #a8b7ab; font-size: 18rpx; line-height: 1.35; margin-top: 6rpx; }
+.no-star { color: #7d9183; font-size: 24rpx; line-height: 1.3; }
+.palace-foot { position: absolute; bottom: 4rpx; left: 6rpx; right: 6rpx; display: flex; justify-content: space-between; font-size: 17rpx; color: #8fa18e; white-space: nowrap; }
+.board-center { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 12rpx; }
+.center-symbol { font-family: 'Songti SC', serif; color: #e7c98c; font-size: 52rpx; letter-spacing: 10rpx; margin-left: 10rpx; }
+.center-label { font-size: 24rpx; margin: 5rpx 0; }
+.center-small { font-size: 19rpx; color: #a4b6a4; }
+.center-hint { font-size: 19rpx; color: #879c8b; margin-top: 12rpx; }
+.transform-row { display: flex; flex-wrap: wrap; gap: 12rpx; padding: 22rpx 0; }
+.detail .card-title { margin-bottom: 12rpx; }
+.star-list { display: flex; flex-wrap: wrap; gap: 14rpx 20rpx; margin: 10rpx 0 22rpx; }
+.star-item { font-size: 26rpx; }
+.star-major { color: #e7c98c; }
+.decades { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 18rpx; }
+.decade { width: calc(33.333% - 8rpx); padding: 14rpx 4rpx; border: 1rpx solid #58634b; border-radius: 12rpx; color: #cbd5c8; background: transparent; font-size: 24rpx; line-height: 1.5; margin: 0; }
+.decade.chosen { color: #19231e; background: #e7c98c; }
+.decade.chosen .muted { color: #45513a; }
+.decade[disabled] { color: #727e73; background: #19231e; border-color: #344035; }
+.decade .muted { font-size: 21rpx; }
+.empty { margin-top: 60rpx; }

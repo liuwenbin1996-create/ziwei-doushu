@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "tsx scripts/regression/pan-integrity.test.ts && tsx scripts/regression/dst-cn.test.ts && tsx scripts/regression/sizhu-lichun-boundary.test.ts && tsx scripts/regression/hongluan-tianxi.test.ts && tsx scripts/regression/famous-hour-consistency.test.ts && tsx scripts/regression/iztro-time-index-boundary.test.ts && tsx scripts/regression/solar-date-exists.test.ts && tsx scripts/regression/natal-dual-sihua-same-palace.test.ts && tsx scripts/regression/neutral-naming.test.ts",
-    "test:mobile": "tsx --test tests/mobile*.test.ts tests/history.test.ts"
+    "test": "node --import tsx scripts/regression/pan-integrity.test.ts && node --import tsx scripts/regression/dst-cn.test.ts && node --import tsx scripts/regression/sizhu-lichun-boundary.test.ts && node --import tsx scripts/regression/hongluan-tianxi.test.ts && node --import tsx scripts/regression/famous-hour-consistency.test.ts && node --import tsx scripts/regression/iztro-time-index-boundary.test.ts && node --import tsx scripts/regression/solar-date-exists.test.ts && node --import tsx scripts/regression/natal-dual-sihua-same-palace.test.ts && node --import tsx scripts/regression/neutral-naming.test.ts",
+    "test:mobile": "node --import tsx --test tests/mobile*.test.ts tests/history.test.ts",
+    "build:miniprogram": "node scripts/build-miniprogram.mjs",
+    "test:miniprogram": "npm run build:miniprogram && node --import tsx --test tests/miniprogram*.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
@@ -21,7 +23,7 @@
     "ioredis": "^5.10.1",
     "iztro": "^2.5.8",
     "lunar-javascript": "^1.7.3",
-    "next": "^16.3.8",
+    "next": "^16.4.3",
     "openai": "^7.42.0",
     "pg": "^8.20.0",
     "react": "^19.2.5",
@@ -31,6 +33,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "esbuild": "^0.28.2",
     "prettier": "^3.9.10",
     "tsx": "^4.19.0",
     "typescript": "^5"

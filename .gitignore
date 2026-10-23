@@ -6,4 +6,5 @@ node_modules/
 dist/
 *.tsbuildinfo
 .DS_Store
+miniprogram/project.private.config.json
 node_modules

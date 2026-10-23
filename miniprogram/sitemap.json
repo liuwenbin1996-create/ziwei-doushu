@@ -1,0 +1,1 @@
+{ "desc": "本机预览版本不开放搜索", "rules": [{ "action": "disallow", "page": "*" }] }
