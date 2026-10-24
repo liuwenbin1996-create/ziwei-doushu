@@ -11,7 +11,10 @@
     "test": "node --import tsx scripts/regression/pan-integrity.test.ts && node --import tsx scripts/regression/dst-cn.test.ts && node --import tsx scripts/regression/sizhu-lichun-boundary.test.ts && node --import tsx scripts/regression/hongluan-tianxi.test.ts && node --import tsx scripts/regression/famous-hour-consistency.test.ts && node --import tsx scripts/regression/iztro-time-index-boundary.test.ts && node --import tsx scripts/regression/solar-date-exists.test.ts && node --import tsx scripts/regression/natal-dual-sihua-same-palace.test.ts && node --import tsx scripts/regression/neutral-naming.test.ts",
     "test:mobile": "node --import tsx --test tests/mobile*.test.ts tests/history.test.ts",
     "build:miniprogram": "node scripts/build-miniprogram.mjs",
-    "test:miniprogram": "npm run build:miniprogram && node --import tsx --test tests/miniprogram*.test.ts"
+    "test:miniprogram": "npm run build:miniprogram && node --import tsx --test tests/miniprogram*.test.ts",
+    "build:cloudbase": "node scripts/build-cloudbase.mjs",
+    "test:cloudbase": "npm run build:cloudbase && node --import tsx --test tests/cloudbase*.test.ts",
+    "export:wechat-cloudbase": "npm run build:miniprogram && npm run build:cloudbase && node scripts/export-wechat-cloudbase.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

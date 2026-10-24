@@ -7,4 +7,8 @@ dist/
 *.tsbuildinfo
 .DS_Store
 miniprogram/project.private.config.json
+project.private.config.json
+cloudfunctions/interpret/index.js
+cloudfunctions/interpret/LICENSE
+cloudfunctions/interpret/THIRD_PARTY_NOTICES.md
 node_modules

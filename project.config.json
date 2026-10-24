@@ -1,0 +1,20 @@
+{
+  "description": "紫微观星：微信云开发与原生小程序",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "appid": "touristappid",
+  "projectname": "ziwei-guanxing-cloudbase",
+  "setting": {
+    "es6": true,
+    "postcss": false,
+    "minified": true,
+    "urlCheck": true
+  },
+  "packOptions": {
+    "ignore": [
+      { "type": "folder", "value": "src" },
+      { "type": "file", "value": "README.md" }
+    ]
+  }
+}

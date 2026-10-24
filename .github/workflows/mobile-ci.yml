@@ -36,5 +36,9 @@ jobs:
         run: npm run test:mobile
       - name: Build and check native WeChat preview
         run: npm run test:miniprogram
+      - name: Install locked cloud function dependencies
+        run: npm ci --prefix cloudfunctions/interpret --ignore-scripts --no-audit --no-fund
+      - name: Build and check CloudBase identity and export
+        run: npm run test:cloudbase
       - name: Build without API secrets
         run: npm run build

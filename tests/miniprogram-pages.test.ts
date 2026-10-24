@@ -10,10 +10,10 @@ const requireMini = createRequire(path.join(root, 'app.js'));
 const engine = requireMini('./utils/chart-engine');
 const clean = (value: unknown) => JSON.parse(JSON.stringify(value));
 
-function appFixture() {
+function appFixture(configOverrides: Record<string, unknown> = {}, wx: Record<string, unknown> = {}) {
   let app: any;
   vm.runInNewContext(readFileSync(path.join(root, 'app.js'), 'utf8'), {
-    require: requireMini, App: (value: unknown) => { app = value; },
+    require: (id: string) => id === './config' ? { ...requireMini('./config'), ...configOverrides } : requireMini(id), wx, App: (value: unknown) => { app = value; },
   });
   return app;
 }
@@ -118,5 +118,42 @@ test('preview has four native routes, no backend by default, and enables domain 
   assert.equal(config.appid, 'touristappid');
   assert.equal(config.setting.urlCheck, true);
   assert.equal(requireMini('./config').apiBaseUrl, '');
+  assert.equal(requireMini('./config').aiTransport, 'cloudbase');
+  assert.equal(requireMini('./config').cloudEnvId, '');
+  assert.equal(requireMini('./config').cloudFunctionName, 'interpret');
+  assert.deepEqual(Object.keys(requireMini('./config')).sort(), ['aiProvider', 'aiTransport', 'apiBaseUrl', 'cloudEnvId', 'cloudFunctionName']);
   assert.equal(engine.readHistory(null).length, 0);
+});
+
+test('cloud initialization is opt-in by environment and disables user tracing', () => {
+  const calls: any[] = [];
+  const wx = { cloud: { init: (options: unknown) => { calls.push(options); } } };
+  const missing = appFixture({}, wx); missing.onLaunch();
+  assert.equal(calls.length, 0); assert.equal(missing.globalData.cloudReady, false); assert.ok(missing.globalData.cloudError);
+  missing.setCurrentRequest(sample); assert.equal(missing.globalData.currentResult.chart.palaces.length, 12);
+  const https = appFixture({ aiTransport: 'https', cloudEnvId: 'unused-env' }, wx); https.onLaunch(); assert.equal(calls.length, 0);
+  const app = appFixture({ cloudEnvId: 'test-cloud-env' }, wx); app.onLaunch();
+  assert.equal(calls.length, 1); assert.equal(JSON.stringify(calls[0]), JSON.stringify({ env: 'test-cloud-env', traceUser: false }));
+  assert.equal(app.globalData.cloudReady, true); assert.equal(app.globalData.cloudError, '');
+});
+
+test('cloud initialization failures are safe and leave local charting usable', async () => {
+  const unavailable = appFixture({ cloudEnvId: 'test-cloud-env' }); unavailable.onLaunch();
+  assert.equal(unavailable.globalData.cloudReady, false); assert.ok(unavailable.globalData.cloudError);
+  for (const init of [() => { throw new Error('PRIVATE_SDK_DETAIL'); }, () => Promise.reject(new Error('PRIVATE_SDK_DETAIL'))]) {
+    const app = appFixture({ cloudEnvId: 'test-cloud-env' }, { cloud: { init } });
+    app.onLaunch(); if (app.cloudInitialization) await app.cloudInitialization;
+    assert.equal(app.globalData.cloudReady, false); assert.match(app.globalData.cloudError, /初始化失败/);
+    assert.ok(!app.globalData.cloudError.includes('PRIVATE_SDK_DETAIL'));
+    app.setCurrentRequest(sample); assert.equal(app.globalData.currentResult.chart.palaces.length, 12);
+  }
+});
+
+test('a validated new chart notifies active views and unsubscribe detaches them', () => {
+  const app = appFixture(); let calls = 0;
+  const remove = app.subscribeCurrentRequest(() => { calls++; });
+  app.setCurrentRequest(sample); assert.equal(calls, 1);
+  assert.throws(() => app.setCurrentRequest({ ...sample, birth: { ...sample.birth, date: '2024-02-30' } }));
+  assert.equal(calls, 1);
+  remove(); app.setCurrentRequest({ ...sample, year: 2027 }); assert.equal(calls, 1);
 });

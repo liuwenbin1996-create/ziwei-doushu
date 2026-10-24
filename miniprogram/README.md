@@ -1,25 +1,34 @@
-# 紫微 · 观星：微信小程序本机版
+# 紫微 · 观星：微信原生小程序
 
-导入本目录到“微信开发者工具”，不要选择上层 Next.js 仓库。四个标签为排盘、命盘、AI 解读、历史；排盘和历史在本机运行。
+四个标签为排盘、命盘、AI 解读、历史。排盘与历史在设备本机运行；已提供编译好的 `utils/chart-engine.js`，不需要在客户端构建 npm。
 
-项目已经包含 `utils/chart-engine.js`，导入后无需“构建 npm”。`touristappid` 是游客占位。已在 Stable 2.02.2608080 的“游客模式”中导入，选择“不使用云服务”即可在本机模拟器运行。
+## 微信云开发（当前方案）
 
-已完成微信开发者工具内真实编译和 iPhone 模拟器的四页验收，20 项自动测试通过。游客项目禁用手机预览；改用工具提供的“测试号”后已生成预览码，用户扫码反馈手机能打开并排盘。测试号仅保存在桌面副本中，没有提交个人 AppID。未上传发布，仓库默认未连接后端。本机智谱已通过合成命盘真实解读，手机 AI 连接尚未完成，没有调用真实 OpenAI。
-
-要在手机预览，登录开发者工具，在新建小程序页面点击 AppID 旁的“测试号”，再将已有项目“详情 → 基本信息”中的 AppID 改为工具实际提供的值。编译后点击“预览”并用手机微信扫码。测试号仍不能直接正式上传，详细步骤见下方仓库文档。
-
-开发修改后，在上层仓库根目录运行：
+在仓库根目录运行：
 
 ```bash
 npm ci
-npm run build:miniprogram
-npm run test:miniprogram
+npm ci --prefix cloudfunctions/interpret --ignore-scripts
+npm run export:wechat-cloudbase
 ```
 
-AI 需要公开 HTTPS 后端地址，填写在 `config.js` 的 `apiBaseUrl`。国内方案在后端配置 `AI_PROVIDER=zhipu`、`ZHIPU_API_KEY` 和 `AI_ACCESS_TOKEN`，`ZHIPU_MODEL` 仅允许当前免费定价的 `glm-4.7-flash` / `glm-4-flash-250414`，本机已验证后者真实返回五项解读；`config.js` 的 `aiProvider` 须与后端一致。模型 Key 只放后端环境变量，不能写进本目录。免费模型仍需本人账号与 Key，受平台限流和当期政策约束，不自动改用收费模型。页面输入的私有访问口令离页清空，不进入历史。
+在微信开发者工具导入生成的 `dist/wechat-cloudbase`，或导入仓库根目录。云开发需要同时包含 `miniprogram/` 与 `cloudfunctions/` 的标准项目，不能只导入当前客户端目录。重复导出时通过 `--out 新目录` 指定新位置，避免覆盖个人配置。
 
-完整导入与部署说明见 [仓库文档](https://github.com/liuwenbin1996-create/ziwei-doushu/blob/feat/wechat-miniprogram-preview/docs/WECHAT_PREVIEW.md)。源码测试不能代替微信模拟器和手机验证。后续使用真实 AppID 时需核对网络配置、服务类目与平台审核要求，本轮没有上传或发布。
+源码的 AppID 为 `touristappid`，云环境 ID 留空。只在个人副本填正式 AppID 和云环境 ID，不提交个人配置。小程序通过微信内部通道调用 `interpret` 云函数，保留合法域名与证书校验；云函数校验微信提供的身份，默认只允许本人名单内测。手机不需要输入模型 Key 或共享口令。
 
-分发时保留 [LICENSE](LICENSE) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。引擎使用 MIT 代码与日历依赖，未加载受非商业许可限制的课程原话或商业断语库。
+智谱 Key 及内部访问口令只放在云函数环境变量。云端开通、套餐费用、密钥上传与实际手机 AI 调用，须分别确认和验证，不能把本地测试通过当作云端已上线。完整步骤见[仓库的微信云开发说明](https://github.com/liuwenbin1996-create/ziwei-doushu/blob/feat/wechat-miniprogram-preview/docs/WECHAT_CLOUDBASE.md)。
 
-当前手机 AI 预览采用电脑后端和临时 HTTPS 通道，步骤见 [本机 AI 预览](https://github.com/liuwenbin1996-create/ziwei-doushu/blob/feat/wechat-miniprogram-preview/docs/LOCAL_AI_PREVIEW.md)。
+## 离线兼容与 HTTPS 后端
+
+只想查看离线排盘时，可继续单独导入本目录。游客身份不能代替正式小程序账号和云开发权限。
+
+已配置公开 HTTPS 后端的部署者可显式将 `config.js` 的 `aiTransport` 改成 `https`，填写 `apiBaseUrl`，并保持 `aiProvider` 与服务端一致。此方式仍使用单独访问口令，离页清空；不得填写模型 API Key。微信必须允许该请求域名。
+
+```bash
+npm run test:miniprogram
+npm run test:cloudbase
+```
+
+自动测试不调用真实模型。手机排盘已得到用户确认，手机云开发 AI 尚未完成验收；未上传审核或公开发布。
+
+分发时保留 [LICENSE](LICENSE) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。引擎复用许可允许的 MIT 代码与日历依赖，不加载受非商业许可限制的课程原话或商业断语库。
