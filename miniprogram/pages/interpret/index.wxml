@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="hero interpret-hero"><text class="eyebrow">以星为镜 · 由你选择</text><text class="title">让星图，更好懂</text><text class="subtitle">把宫位和星曜，转成可观察的生活提示。</text></view>
+  <view class="topic-list"><text wx:for="{{topics}}" wx:key="*this" class="tag">{{item}}</text></view>
+  <view wx:if="{{!configured}}" class="notice">{{configurationError}}</view>
+  <view wx:if="{{!hasChart}}" class="card interpret-empty"><text class="card-title">先起一张命盘</text><text class="muted">输入出生日期、时辰和性别。启用 AI 服务后可查看五个维度的文化解读。</text><button class="button button-secondary" bindtap="onStart">去排盘</button></view>
+  <view wx:else class="card interpret-controls">
+    <text class="card-title">本次解读的命盘</text><text class="chart-summary">{{chartSummary}}</text>
+    <block wx:if="{{configured}}">
+      <view wx:if="{{viaTunnel}}" class="notice">临时预览经 Cloudflare HTTPS 通道转发出生信息、AI访问口令与解读结果，电脑和通道需保持运行。</view>
+      <block wx:if="{{!isCloud}}">
+        <view class="token-heading"><text class="label">AI 访问口令</text><text class="muted token-note">由部署者提供</text></view>
+        <input class="token-input" password="{{true}}" value="{{token}}" maxlength="512" placeholder="不是模型 API Key" placeholder-class="token-placeholder" bindinput="onTokenInput" disabled="{{busy}}" />
+        <text class="muted token-hint">口令只在当前页面内存中使用，离开页面即清空。</text>
+      </block>
+      <view wx:if="{{isCloud}}" class="notice">云开发内测只允许部署者添加的本人名单。无需输入共享口令，微信身份由云端验证，不会发送给模型。</view>
+      <checkbox-group bindchange="onConsentChange"><label class="consent-row"><checkbox value="consent" checked="{{consent}}" color="#d4b880" disabled="{{busy || identityBusy}}" /><text wx:if="{{isCloud}}">同意将出生日期、时辰、性别和所选流年经腾讯云开发发送至云函数，重新排盘后将结构化命盘交给 {{providerName}} 生成解读。微信 OPENID 不发送给模型。</text><text wx:else>同意将出生日期、时辰、性别和所选流年发送至配置的 HTTPS 服务端。服务端重新排盘后，将结构化命盘发送给 {{providerName}} 生成本次解读。</text></label></checkbox-group>
+      <button class="button interpret-generate" bindtap="onInterpret" loading="{{busy}}" disabled="{{!consent || (!isCloud && !token) || busy || identityBusy}}">{{busy ? '正在解读星图…' : '生成 AI 解读'}}</button>
+      <text wx:if="{{busy}}" class="muted progress-message">{{isCloud ? '切换页面或等待超时只取消本次等待，云函数可能继续处理，请勿连续重试。' : '正在整理十二宫、四化与流年，请稍候。切换页面将取消本次等待。'}}</text>
+    </block>
+  </view>
+  <view wx:if="{{isCloud && configured}}" class="card interpret-controls">
+    <text class="card-title">本人内测身份</text>
+    <text class="muted">仅用于由部署者添加本人内测名单。身份由微信云端取得，不能自行输入；不会发送给模型或写入本机历史，离开页面即清空。</text>
+    <button class="button button-secondary" bindtap="onIdentity" loading="{{identityBusy}}" disabled="{{busy || identityBusy}}">查看我的内测身份</button>
+    <text wx:if="{{openid}}" class="muted" selectable="{{true}}" style="word-break:break-all;">{{openid}}</text>
+  </view>
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+  <view wx:if="{{analysis}}" class="analysis-results">
+    <view wx:for="{{analysis.sections}}" wx:key="topic" class="card analysis-section">
+      <text class="eyebrow">{{item.topic}}观察</text><text class="analysis-summary">{{item.summary}}</text><text class="analysis-subheading">命盘线索</text>
+      <view wx:for="{{item.observations}}" wx:for-item="observation" wx:key="*this" class="analysis-item"><text class="analysis-dot">·</text><text>{{observation}}</text></view>
+      <text class="analysis-subheading">可以尝试</text><view wx:for="{{item.suggestions}}" wx:for-item="suggestion" wx:key="*this" class="analysis-item"><text class="analysis-dot">·</text><text>{{suggestion}}</text></view>
+    </view>
+    <view class="notice">{{analysis.notice}}</view>
+  </view>
+  <view class="notice interpret-disclaimer">仅供传统文化学习与自我观察，非科学预测。AI 可能理解有误，不用于医疗、投资或婚姻等重大决策。AI 解读需联网，当前国内方案使用智谱免费模型，仍受平台限流和当期政策约束。</view>
+</view>

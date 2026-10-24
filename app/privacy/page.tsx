@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { AI_PROVIDER_NAMES, selectedAIProvider } from "@/lib/mobile/ai-config";
+export const dynamic = "force-dynamic";
 export default function Privacy() {
+  const provider = selectedAIProvider(process.env);
   return (
     <main className="legal-page">
       <Link href="/">← 返回观星</Link>
@@ -11,12 +14,21 @@ export default function Privacy() {
       <p>
         只有勾选同意并点击「生成 AI
         解读」后，出生信息和所选流年才会发往本站服务端。服务端重新排盘后把结构化命盘发送给
-        OpenAI，设置
-        store:false。本站不建立出生信息数据库，也不把命盘写入服务器日志。OpenAI
-        的服务处理和保留规则由其政策决定，store:false 不等于零保留。
+        {provider ? AI_PROVIDER_NAMES[provider] : "部署者配置的 AI 服务商"}
+        。不发送公历生日、姓名或地点。
+        本站不建立出生信息数据库，也不把命盘写入服务器日志。
+        {provider === "openai"
+          ? "OpenAI 请求设置 store:false，但不等于零保留。"
+          : provider === "zhipu"
+            ? "智谱的数据处理和保留规则由其平台政策决定，本站不承诺供应商零保留。"
+            : "当前服务商配置无效，AI 请求会被拒绝。"}
       </p>
       <p>
-        AI 访问口令仅保留在当前页面内存，请勿分享给无关人员。OpenAI API Key
+        使用电脑临时预览时，请求及解读结果会经过 Cloudflare HTTPS
+        通道转发到部署者电脑。通道只用于测试，关闭进程后地址失效。
+      </p>
+      <p>
+        AI 访问口令仅保留在当前页面内存，请勿分享给无关人员。模型 API Key
         只由部署者配置在服务端，切勿在页面或聊天中输入。
       </p>
       <p>

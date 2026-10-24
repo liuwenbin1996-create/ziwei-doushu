@@ -1,0 +1,19 @@
+{
+  "description": "紫微观星：无需后端的本机排盘预览",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "./",
+  "appid": "touristappid",
+  "projectname": "ziwei-guanxing-preview",
+  "setting": {
+    "es6": true,
+    "postcss": false,
+    "minified": true,
+    "urlCheck": true
+  },
+  "packOptions": {
+    "ignore": [
+      { "type": "folder", "value": "src" },
+      { "type": "file", "value": "README.md" }
+    ]
+  }
+}

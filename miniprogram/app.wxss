@@ -1,0 +1,24 @@
+page { background: #101815; color: #edf0e9; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 28rpx; line-height: 1.65; }
+view, text, button, input, picker { box-sizing: border-box; }
+.page { padding: 36rpx 24rpx 64rpx; max-width: 900rpx; margin: 0 auto; }
+.hero { padding: 20rpx 6rpx 36rpx; }
+.hero > .eyebrow, .hero > .title, .hero > .subtitle { display: block; }
+.eyebrow { color: #cdb27d; letter-spacing: 5rpx; font-size: 21rpx; margin-bottom: 10rpx; }
+.title { font-size: 52rpx; font-family: 'Songti SC', 'STSong', serif; font-weight: 600; letter-spacing: 4rpx; line-height: 1.4; }
+.subtitle { color: #a5b4a9; font-size: 26rpx; margin-top: 16rpx; }
+.card { background: #19231e; border: 1rpx solid #344035; border-radius: 24rpx; padding: 28rpx; margin-bottom: 24rpx; }
+.card-title { color: #e7c98c; font-size: 32rpx; font-weight: 600; margin-bottom: 20rpx; }
+.muted { color: #a5b4a9; font-size: 24rpx; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.label { color: #b6c1b8; font-size: 25rpx; }
+.value { color: #edf0e9; }
+.button { width: 100% !important; min-width: 0; color: #19231e; background: #e7c98c; border-radius: 16rpx; margin: 24rpx 0 0; padding: 6rpx 24rpx; font-size: 29rpx; font-weight: 600; min-height: 88rpx; }
+.button::after { border: 0; }
+.button[disabled] { color: #8a958d; background: #303b33; }
+.button-secondary { color: #e7c98c; background: transparent; border: 1rpx solid #58634b; }
+.button-secondary[disabled] { background: transparent; }
+.notice { color: #b6c1b8; background: #1b2922; border-left: 4rpx solid #9d8a5f; padding: 20rpx; border-radius: 8rpx; font-size: 24rpx; margin: 20rpx 0; }
+.error { color: #ffc6b7; background: #35251f; border-radius: 12rpx; padding: 20rpx; margin: 20rpx 0; font-size: 25rpx; }
+.tag { color: #e7c98c; background: #303a2c; border-radius: 8rpx; padding: 2rpx 10rpx; font-size: 21rpx; }
+.footer { color: #8c9e90; font-size: 22rpx; text-align: center; margin: 36rpx 10rpx 0; }
+input { background: #101815; border: 1rpx solid #455143; border-radius: 12rpx; color: #edf0e9; min-height: 88rpx; padding: 14rpx 20rpx; }

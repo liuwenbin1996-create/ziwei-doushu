@@ -1,3 +1,4 @@
+import { interpretationEvidence } from "../lib/mobile/grounding";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { handleChart, handleInterpret } from "../lib/mobile/http";
@@ -19,6 +20,7 @@ const input = {
   year: 2026,
 };
 const env = {
+  AI_PROVIDER: "openai",
   OPENAI_API_KEY: "test-placeholder-never-used",
   AI_ACCESS_TOKEN: "unit-test-private-access",
   OPENAI_MODEL: "gpt-5.4-mini",
@@ -27,7 +29,7 @@ const interpretation = {
   sections: INTERPRETATION_TOPICS.map((topic) => ({
     topic,
     summary: `${topic}传统文化观察。`,
-    observations: ["按盘面符号作参考。"],
+    observations: interpretationEvidence(createMobileChart(input))[topic],
     suggestions: ["结合实际经历自行核对。"],
   })),
   notice: "传统文化参考",
@@ -44,7 +46,9 @@ function request(
       Origin: "https://ziwei.test",
       ...headers,
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(
+      body && typeof body === "object" ? { provider: "openai", ...body } : body,
+    ),
   });
 }
 const success = async () => ({
@@ -227,6 +231,14 @@ test("upstream failures map to friendly status codes without leaking details", a
       504,
     ],
     [{ status: 504, message: "SECRET_UPSTREAM_DETAIL" }, 504],
+    [
+      {
+        name: "Error",
+        cause: { name: "AbortError" },
+        message: "SECRET_UPSTREAM_DETAIL",
+      },
+      504,
+    ],
     [{ status: 401, message: "SECRET_UPSTREAM_DETAIL" }, 502],
     [new Error("SECRET_UPSTREAM_DETAIL"), 502],
   ] as const) {

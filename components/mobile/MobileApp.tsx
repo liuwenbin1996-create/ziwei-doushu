@@ -16,6 +16,7 @@ import {
 } from "@/lib/mobile/history";
 import { BRANCHES, STEMS } from "@/lib/ziwei/constants";
 import type { Palace } from "@/lib/ziwei/types";
+import { AI_PROVIDER_NAMES, type AIProvider } from "@/lib/mobile/ai-config";
 
 const HOURS = [
   "子时 · 00:00–00:59",
@@ -156,7 +157,11 @@ function dateToday() {
   ].join("-");
 }
 
-export default function MobileApp() {
+export default function MobileApp({
+  aiProvider,
+}: {
+  aiProvider: AIProvider | null;
+}) {
   const [maxDate, setMaxDate] = useState<string>();
   const [date, setDate] = useState("1996-06-15");
   const [hour, setHour] = useState("4");
@@ -181,14 +186,12 @@ export default function MobileApp() {
   const abortRef = useRef<AbortController | null>(null);
   const revision = useRef(0);
   const jump = (id: string) =>
-    document
-      .getElementById(id)
-      ?.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth",
-        block: "start",
-      });
+    document.getElementById(id)?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "start",
+    });
   const clearAI = () => {
     revision.current++;
     abortRef.current?.abort();
@@ -327,7 +330,11 @@ export default function MobileApp() {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
-        body: JSON.stringify({ ...result.input, consent }),
+        body: JSON.stringify({
+          ...result.input,
+          consent,
+          provider: aiProvider,
+        }),
         signal: controller.signal,
       });
       const data = await response.json();
@@ -915,7 +922,7 @@ export default function MobileApp() {
                 id="ai-token"
                 type="password"
                 autoComplete="off"
-                placeholder="输入访问口令，不是 OpenAI API Key"
+                placeholder="输入访问口令，不是模型 API Key"
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
               />
@@ -927,7 +934,10 @@ export default function MobileApp() {
                 />
                 <span>
                   同意将出生信息及所选流年发送到本站服务端，并将结构化命盘发送给
-                  OpenAI，用于本次解读。
+                  {aiProvider
+                    ? AI_PROVIDER_NAMES[aiProvider]
+                    : "尚未配置的 AI 服务商"}
+                  ，用于本次解读。
                   <Link href="/privacy">了解数据使用</Link>
                 </span>
               </label>

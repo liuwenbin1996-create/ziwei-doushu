@@ -1,0 +1,16 @@
+{
+  "name": "ziwei-interpret-cloud-function",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "wx-server-sdk": "4.0.2"
+  },
+  "overrides": {
+    "axios": "0.34.0",
+    "@cloudbase/database": "2.0.0"
+  }
+}

@@ -43,15 +43,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function todayInChina(now: Date): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Shanghai",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(now);
-  const part = (type: string) =>
-    parts.find((p) => p.type === type)?.value ?? "";
-  return `${part("year")}-${part("month")}-${part("day")}`;
+  // “今天”只需要当前中国标准时间；不依赖小程序 JSCore 可能缺失的 Intl。
+  const china = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+  return [china.getUTCFullYear(), String(china.getUTCMonth() + 1).padStart(2, "0"), String(china.getUTCDate()).padStart(2, "0")].join("-");
 }
 
 /** 严格校验，不接受 Date 自动顺延的 2 月 30 日等日期。 */

@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="hero">
+    <view class="eyebrow">紫 微 斗 数 · 本 机 预 览</view>
+    <view class="title">观星，也观自己。</view>
+    <view class="subtitle">从十二宫出发，了解传统星盘的结构。</view>
+  </view>
+  <view class="card">
+    <view class="card-title">起一张命盘</view>
+    <view class="muted">下方为默认示例。请按实际出生信息修改。</view>
+    <view class="field">
+      <view class="label">公历出生日期</view>
+      <picker mode="date" value="{{date}}" start="1900-01-01" end="{{maxDate}}" bindchange="changeDate">
+        <view class="picker row"><text>{{date}}</text><text class="muted">选择 ›</text></view>
+      </picker>
+    </view>
+    <view class="field">
+      <view class="label">出生时辰</view>
+      <picker mode="selector" range="{{hours}}" value="{{hourIndex}}" bindchange="changeHour">
+        <view class="picker row"><text>{{hours[hourIndex]}}</text><text class="muted">›</text></view>
+      </picker>
+    </view>
+    <view class="field">
+      <view class="label">排盘性别</view>
+      <picker mode="selector" range="{{genders}}" value="{{genderIndex}}" bindchange="changeGender">
+        <view class="picker row"><text>{{genders[genderIndex]}}</text><text class="muted">›</text></view>
+      </picker>
+    </view>
+    <view class="error" wx:if="{{error}}">{{error}}</view>
+    <button class="button" bindtap="submit" loading="{{busy}}" disabled="{{busy}}">开始排盘</button>
+  </view>
+  <view class="notice">晚子时 23:00–23:59 按次日排盘；闰月按前后半月处理。当前使用出生地记录的钟表时辰，不校正真太阳时。</view>
+  <view class="card explain">
+    <view class="card-title">命盘留在这台设备</view>
+    <view>排盘无需联网。点“保存命盘”才会写入本机历史，最多保留 20 张。</view>
+    <view class="muted">只有在 AI 页面主动同意并发起解读时，出生信息才会发送给配置的后端。当前默认未配置 AI 服务。</view>
+  </view>
+  <view class="footer">传统文化研究与自我观察参考 · 不作现实决策依据</view>
+</view>
